@@ -26,8 +26,8 @@ namespace Start_To_Finish.Data
                 .HasData(
                 new IdentityRole
                 {
-                    Name = "Admin",
-                    NormalizedName = "ADMIN"
+                    Name = "ToDoListMaker",
+                    NormalizedName = "ToDoListMaker"
                 }
                 );
         }

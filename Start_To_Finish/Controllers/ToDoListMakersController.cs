@@ -21,6 +21,11 @@ namespace Start_To_Finish.Controllers
             _context = context;
         }
 
+        public IActionResult Home()
+        {
+            return View();
+        }
+
         // GET: ToDoListMakers
         public async Task<IActionResult> Index()
         {

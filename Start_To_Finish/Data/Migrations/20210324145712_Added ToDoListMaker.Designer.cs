@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Start_To_Finish.Data;
 
 namespace Start_To_Finish.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210324145712_Added ToDoListMaker")]
+    partial class AddedToDoListMaker
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,10 +50,10 @@ namespace Start_To_Finish.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "8a0db473-b59a-449a-8f85-cf2a3d83f39f",
-                            ConcurrencyStamp = "505b46e8-9650-4697-9ee9-7d7935dbf589",
-                            Name = "ToDoListMaker",
-                            NormalizedName = "ToDoListMaker"
+                            Id = "ca4c6c5c-09dc-4d97-bfd3-d6815bf631d8",
+                            ConcurrencyStamp = "71e7e78d-6b51-4d83-9fb4-f4e94b3032e4",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
                         });
                 });
 

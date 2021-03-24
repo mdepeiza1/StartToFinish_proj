@@ -24,7 +24,7 @@ namespace Start_To_Finish.ActionFilters
             {
                 if (_claimsPrincipal.IsInRole("ToDoListMaker"))
                 {
-                    context.Result = new RedirectToActionResult("Index", "ToDoListMakers", null);
+                    context.Result = new RedirectToActionResult("Home", "ToDoListMakers", null);
                 }
             }
         }
