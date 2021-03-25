@@ -17,6 +17,10 @@ namespace Start_To_Finish.Data
         }
 
         public DbSet<ToDoListMaker> ToDoListMakers { get; set; }
+        public DbSet<NoteToDo> NotesToDo { get; set; }
+        public DbSet<NoteInProgress> NotesInProgress { get; set; }
+        public DbSet<NoteComplete> NotesComplete { get; set; }
+        public DbSet<Note> Notes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,11 @@ namespace Start_To_Finish.Controllers
 
         public IActionResult Home()
         {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var toDoListMaker = _context.ToDoListMakers.Where(t => t.IdentityUserId == userId).FirstOrDefault();
+            ViewBag.ToDoListMaker.NotesToDo = toDoListMaker.NotesToDo;
+            ViewBag.ToDoListMaker.NotesInProgress = toDoListMaker.NotesInProgress;
+            ViewBag.ToDoListMaker.NotesComplete = toDoListMaker.NotesComplete;
             return View();
         }
 
@@ -34,7 +40,7 @@ namespace Start_To_Finish.Controllers
         }
 
         // GET: ToDoListMakers/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
@@ -98,7 +104,7 @@ namespace Start_To_Finish.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Name,IdentityUserId")] ToDoListMaker toDoListMaker)
+        public async Task<IActionResult> Edit(int? id, [Bind("Id,Name,IdentityUserId")] ToDoListMaker toDoListMaker)
         {
             if (id != toDoListMaker.Id)
             {
@@ -130,7 +136,7 @@ namespace Start_To_Finish.Controllers
         }
 
         // GET: ToDoListMakers/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
@@ -159,7 +165,7 @@ namespace Start_To_Finish.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ToDoListMakerExists(string id)
+        private bool ToDoListMakerExists(int? id)
         {
             return _context.ToDoListMakers.Any(e => e.Id == id);
         }

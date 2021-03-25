@@ -4,6 +4,11 @@
 // Write your JavaScript code.
 
 //Added later
+
+var connection = new signalR.HubConnectionBuilder() /*may need const connection*/
+    .withUrl("/chatHub")
+    .build();
+
 $(function () {
     var kanbanCol = $('.panel-body');
     kanbanCol.css('max-height', (window.innerHeight - 150) + 'px');
@@ -34,8 +39,11 @@ function draggableInit() {
     $('.panel-body').bind('drop', function (event) {
         var children = $(this).children();
         var targetId = children.attr('id');
+        var noteId = $(this).attr('id'); //added later
 
         if (sourceId != targetId) {
+            await connection.invoke("ChangeColumnInDatabase", noteId, sourceId, targetId);
+
             var elementId = event.originalEvent.dataTransfer.getData("text/plain");
 
             $('#processing-modal').modal('toggle'); //before post
@@ -45,6 +53,7 @@ function draggableInit() {
             setTimeout(function () {
                 var element = document.getElementById(elementId);
                 children.prepend(element);
+
                 $('#processing-modal').modal('toggle'); // after post
             }, 1000);
 
@@ -53,3 +62,13 @@ function draggableInit() {
         event.preventDefault();
     });
 }
+
+//added for ChatHub
+(async () => {
+    try {
+        await connection.start();
+    }
+    catch (e) {
+        console.error(e.toString());
+    }
+})();
