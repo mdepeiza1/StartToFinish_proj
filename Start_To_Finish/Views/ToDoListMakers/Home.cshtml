@@ -49,6 +49,9 @@
             }
             <input type="submit" />
         </form>*@
+                                        <p>
+                                            @item.Option
+                                        </p>
                                         <a asp-action="EditNote" asp-route-id="@item.Id">Edit</a>
                                         <a asp-action="EditOptions" asp-route-id="@item.Id">Edit Responsibility/Learning Opportunity</a>
                                     </div>
@@ -117,6 +120,9 @@
             }
             <input type="submit" />
         </form>*@
+                                        <p>
+                                            @item.Option
+                                        </p>
                                         <a asp-action="EditNote" asp-route-id="@item.Id">Edit</a>
                                         <a asp-action="EditOptions" asp-route-id="@item.Id">Edit Responsibility/Learning Opportunity</a>
                                     </div>
@@ -179,6 +185,9 @@
             <input type="radio" value="" id="Option" name="Option" />Male<br />
             <input type="submit" />
         </form>*@
+                                        <p>
+                                            @item.Option
+                                        </p>
                                         <a asp-action="EditNote" asp-route-id="@item.Id">Edit Note</a>
                                         <a asp-action="EditOptions" asp-route-id="@item.Id">Edit Responsibility/Learning Opportunity</a>
                                     </div>

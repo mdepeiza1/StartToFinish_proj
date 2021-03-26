@@ -394,7 +394,61 @@ namespace Start_To_Finish.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditNote(int? id, [Bind("Id,Title,NoteInfo,YoutubeInfo,GoogleMapsInfo,SpotifyInfo,isToDo," +
-            "isInProgress,isComplete,ToDoListMakerId")] Note noteToEdit)
+            "isInProgress,isComplete,Option,Options,ToDoListMakerId")] Note noteToEdit)
+        {
+            if (id != noteToEdit.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(noteToEdit);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!NoteExists(noteToEdit.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Home));
+            }
+            //ViewData["IdentityUserId"] = new SelectList(_context.Users, "Id", "Id", toDoListMaker.IdentityUserId);
+            return View(noteToEdit);
+        }
+
+        // GET: ToDoListMakers/Edit/5
+        public async Task<IActionResult> EditOptions(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var noteToEdit = await _context.Notes.FindAsync(id);
+            if (noteToEdit == null)
+            {
+                return NotFound();
+            }
+            //ViewData["IdentityUserId"] = new SelectList(_context.Users, "Id", "Id", toDoListMaker.IdentityUserId);
+            return View(noteToEdit);
+        }
+
+        // POST: ToDoListMakers/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditOptions(int? id, [Bind("Id,Title,NoteInfo,YoutubeInfo,GoogleMapsInfo,SpotifyInfo,isToDo," +
+            "isInProgress,isComplete,Options,Option,ToDoListMakerId")] Note noteToEdit)
         {
             if (id != noteToEdit.Id)
             {
