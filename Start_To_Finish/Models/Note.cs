@@ -23,6 +23,8 @@ namespace Start_To_Finish.Models
         [BindProperty, Required]
         public string Option { get; set; } = "Neither";
         public string[] Options = new[] { "Responsibility", "Learning Opportunity", "Neither" };
+        //public DateTime StartDate { get; set; }
+        //public DateTime EndDate { get; set; }
 
         [ForeignKey("ToDoListMaker")]
         public int ToDoListMakerId { get; set; }

@@ -198,8 +198,15 @@ namespace Start_To_Finish.Controllers
             return View(toDoListMaker);
         }
 
-        // GET: ToDoListMakers/Create
-        public IActionResult Create()
+
+        public IActionResult GraphTimeSpentView()
+        {
+            return View();
+        }
+
+
+    // GET: ToDoListMakers/Create
+    public IActionResult Create()
         {
             ViewData["IdentityUserId"] = new SelectList(_context.Users, "Id", "Id");
             return View();

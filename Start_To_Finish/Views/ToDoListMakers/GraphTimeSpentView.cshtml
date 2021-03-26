@@ -1,0 +1,115 @@
+﻿
+@{
+    ViewData["Title"] = "GraphTimeSpentView";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>GraphTimeSpentView</h1>
+<br>
+<br>
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    <input type="radio" id="global" name="region" value="global">
+                    <label for="global">Global</label><br>
+                    <input type="radio" id="na" name="region" value="na">
+                    <label for="na">North America</label><br>
+                    <input type="radio" id="eu" name="region" value="eu">
+                    <label for="eu">Europe</label><br>
+                    <input type="radio" id="jp" name="region" value="jp">
+                    <label for="jp">Japan</label><br>
+                    <input type="radio" id="other" name="region" value="other">
+                    <label for="other">Other Regions</label><br>
+                    <input type="submit" value="Submit">
+                </form>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-4">
+        <canvas id="chart" width="200" height="200"></canvas>
+    </div>
+</div>
+<script>
+var ctx = document.getElementById('chart').getContext('2d');
+var pieChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [0,1], //xs 
+        datasets: [{
+            label: 'Time Spent On Tasks',
+            data: [10, 30], //ys
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)',
+
+                'rgba(250, 100, 128, 0.2)',
+                'rgba(57, 160, 230, 0.2)',
+                'rgba(225, 180, 86, 0.2)',
+                'rgba(150, 192, 192, 0.2)',
+                'rgba(88, 102, 255, 0.2)',
+                'rgba(230, 159, 64, 0.2)',
+
+                'rgba(255, 150, 132, 0.2)',
+                'rgba(54, 100, 235, 0.2)',
+                'rgba(255, 250, 86, 0.2)',
+
+                'rgba(75, 192, 170, 0.2)',
+                'rgba(153, 102, 52, 0.2)',
+                'rgba(255, 159, 80, 0.2)',
+
+                'rgba(255, 99, 104, 0.2)',
+                'rgba(54, 102, 235, 0.2)',
+                'rgba(200, 206, 86, 0.2)',
+                'rgba(50, 192, 192, 0.2)',
+                'rgba(153, 142, 255, 0.2)',
+                'rgba(255, 159, 100, 0.2)',
+
+
+
+
+                'rgba(245, 99, 132, 0.2)',
+                'rgba(54, 140, 235, 0.2)',
+                'rgba(255, 206, 51, 0.2)',
+                'rgba(75, 192, 156, 0.2)',
+                'rgba(153, 57, 255, 0.2)',
+                'rgba(199, 159, 64, 0.2)',
+
+                'rgba(212, 100, 128, 0.2)',
+                'rgba(57, 123, 230, 0.2)',
+                'rgba(225, 180, 80, 0.2)',
+                'rgba(150, 192, 180, 0.2)',
+                'rgba(88, 72, 255, 0.2)',
+                'rgba(215, 159, 64, 0.2)',
+
+                'rgba(178, 150, 132, 0.2)',
+                'rgba(54, 150, 235, 0.2)',
+                'rgba(255, 250, 57, 0.2)',
+
+                'rgba(75, 140, 170, 0.2)',
+                'rgba(153, 150, 52, 0.2)',
+                'rgba(255, 127, 80, 0.2)',
+
+                'rgba(73, 99, 104, 0.2)',
+                'rgba(50, 102, 235, 0.2)',
+                'rgba(175, 206, 86, 0.2)',
+                'rgba(50, 192, 184, 0.2)',
+                'rgba(153, 142, 222, 0.2)',
+                'rgba(255, 159, 198, 0.2)',
+
+                'rgba(50, 175, 192, 0.2)',
+                'rgba(153, 101, 255, 0.2)',
+                'rgba(255, 135, 100, 0.2)'
+            ],
+            hoverOffset: 4
+        }]
+    },
+});
+</script>
