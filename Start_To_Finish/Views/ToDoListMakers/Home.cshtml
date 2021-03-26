@@ -18,18 +18,43 @@
             <div class="panel-body">
                 <div id="To-do" class="kanban-centered">
 
-                    @foreach (var item in ViewBag.ToDoListMaker.NotesToDo)
+                    @foreach (var item in ViewBag.NotesToDo)
                     {
-                        <article class="kanban-entry grab" id="@item.Id" draggable="true">
-                            <div class="kanban-entry-inner">
-                                <div class="kanban-label">
-                                    <h2><a href="#"> @item.Title</a> <span>posted a status update</span></h2>
-                                    <p>
-                                        @item.NoteInfo
-                                    </p>
+                        @if (ViewBag.NotesToDoBool)
+                        {
+                            <article class="kanban-entry grab" id="@item.Id" draggable="true">
+                                <div class="kanban-entry-inner">
+                                    <div class="kanban-label">
+                                        <h2><a href="#"> @item.Title</a></h2>
+                                        <p>
+                                            @item.NoteInfo
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                        </article>
+                            </article>
+                        }
+                        else
+                        {
+                            <article class="kanban-entry grab" id="@item.Id" draggable="true">
+                                <div class="kanban-entry-inner">
+                                    <div class="kanban-label">
+                                        <h2><a href="#"> @item.Title</a></h2>
+                                        <p>
+                                            @item.NoteInfo
+                                        </p>
+                                        @*<form method="post">
+            @foreach (var option in Model.Options)
+            {
+                @Html.RadioButtonFor(model => model.Option, option) @option<br />
+            }
+            <input type="submit" />
+        </form>*@
+                                        <a asp-action="EditNote" asp-route-id="@item.Id">Edit</a>
+                                        <a asp-action="EditOptions" asp-route-id="@item.Id">Edit Responsibility/Learning Opportunity</a>
+                                    </div>
+                                </div>
+                            </article>
+                        }
 
                         @*<article class="kanban-entry grab" id="item3" draggable="true">
                 <div class="kanban-entry-inner">
@@ -43,11 +68,11 @@
                 </div>
             </article>*@
                     }
-                    </div>
+                </div>
             </div>
-            
+
             <div class="panel-footer">
-                <a href="#">Add a card...</a>
+                <a asp-action="CreateToDo">Add a card...</a>
             </div>
         </div>
         <!--sütun bitiş-->
@@ -60,24 +85,60 @@
             <div class="panel-body">
                 <div id="In Progress" class="kanban-centered">
 
-                    @foreach (var item in ViewBag.ToDoListMaker.NotesInProgress)
+                    @foreach (var item in ViewBag.NotesInProgress)
                     {
-                        <article class="kanban-entry grab" id="@item.Id" draggable="true">
-                            <div class="kanban-entry-inner">
-                                <div class="kanban-label">
-                                    <h2><a href="#"> @item.Title</a> <span>posted a status update</span></h2>
-                                    <p>
-                                        @item.NoteInfo
-                                    </p>
+
+                        @if (ViewBag.NotesInProgressBool)
+                        {
+                            <article class="kanban-entry grab" id="@item.Id" draggable="true">
+                                <div class="kanban-entry-inner">
+                                    <div class="kanban-label">
+                                        <h2><a href="#"> @item.Title</a></h2>
+                                        <p>
+                                            @item.NoteInfo
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                        </article>
+                            </article>
+                        }
+                        else
+                        {
+                            <article class="kanban-entry grab" id="@item.Id" draggable="true">
+                                <div class="kanban-entry-inner">
+                                    <div class="kanban-label">
+                                        <h2><a href="#"> @item.Title</a></h2>
+                                        <p>
+                                            @item.NoteInfo
+                                        </p>
+                                        @*<form method="post">
+            @foreach (var option in Model.Options)
+            {
+                @Html.RadioButtonFor(model => model.Option, option) @option<br />
+            }
+            <input type="submit" />
+        </form>*@
+                                        <a asp-action="EditNote" asp-route-id="@item.Id">Edit</a>
+                                        <a asp-action="EditOptions" asp-route-id="@item.Id">Edit Responsibility/Learning Opportunity</a>
+                                    </div>
+                                </div>
+                            </article>
+                        }
                     }
+                    @*<article class="kanban-entry grab" id="item-7" draggable="true">
+            <div class="kanban-entry-inner">
+                <div class="kanban-label">
+                    <h2><a href="#">Test Card</a> <span>posted a status update</span></h2>
+                    <p>
+                        Just an example
+                    </p>
                 </div>
             </div>
-            <div class="panel-footer">
-                <a href="#">Add a card...</a>
+        </article>*@
+                </div>
             </div>
+            @*<div class="panel-footer">
+                <a asp-action="CreateInProgress">Add a card...</a>
+            </div>*@
         </div>
         <!--sütun bitiş-->
         <!--sütun başlangıç-->
@@ -89,24 +150,62 @@
             <div class="panel-body">
                 <div id="Complete" class="kanban-centered">
 
-                    @foreach (var item in ViewBag.ToDoListMaker.NotesComplete)
+                    @foreach (var item in ViewBag.NotesComplete)
                     {
-                        <article class="kanban-entry grab" id="@item.Id" draggable="true">
-                            <div class="kanban-entry-inner">
-                                <div class="kanban-label">
-                                    <h2><a href="#"> @item.Title</a> <span>posted a status update</span></h2>
-                                    <p>
-                                        @item.NoteInfo
-                                    </p>
+
+                        @if (ViewBag.NotesCompleteBool)
+                        {
+                            <article class="kanban-entry grab" id="@item.Id" draggable="true">
+                                <div class="kanban-entry-inner">
+                                    <div class="kanban-label">
+                                        <h2><a href="#"> @item.Title</a></h2>
+                                        <p>
+                                            @item.NoteInfo
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                        </article>
+                            </article>
+                        }
+                        else
+                        {
+                            <article class="kanban-entry grab" id="@item.Id" draggable="true">
+                                <div class="kanban-entry-inner">
+                                    <div class="kanban-label">
+                                        <h2><a href="#"> @item.Title</a></h2>
+                                        <p>
+                                            @item.NoteInfo
+                                        </p>
+                                        @*<form method="post">
+            <input type="radio" value="" id="Option" name="Option" />Male<br />
+            <input type="submit" />
+        </form>*@
+                                        <a asp-action="EditNote" asp-route-id="@item.Id">Edit Note</a>
+                                        <a asp-action="EditOptions" asp-route-id="@item.Id">Edit Responsibility/Learning Opportunity</a>
+                                    </div>
+                                </div>
+                            </article>
+                        }
                     }
                 </div>
             </div>
-            <div class="panel-footer">
-                <a href="#">Add a card...</a>
-            </div>
+            @*<div class="panel-footer">
+                <a asp-action="CreateComplete">Add a card...</a>
+            </div>*@
+            @*<ul id="sortable1" class="connectedSortable">
+                    <li class="ui-state-default">Item 1</li>
+                    <li class="ui-state-default">Item 2</li>
+                    <li class="ui-state-default">Item 3</li>
+                    <li class="ui-state-default">Item 4</li>
+                    <li class="ui-state-default">Item 5</li>
+                </ul>
+
+                <ul id="sortable2" class="connectedSortable">
+                    <li class="ui-state-highlight">Item 1</li>
+                    <li class="ui-state-highlight">Item 2</li>
+                    <li class="ui-state-highlight">Item 3</li>
+                    <li class="ui-state-highlight">Item 4</li>
+                    <li class="ui-state-highlight">Item 5</li>
+                </ul>*@
         </div>
         <!--sütun bitiş-->
 
@@ -128,4 +227,7 @@
         </div>
     </div>
 </div>
+
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/site.js"></script>
 

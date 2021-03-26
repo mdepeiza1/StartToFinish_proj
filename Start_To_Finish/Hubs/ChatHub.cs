@@ -13,14 +13,12 @@ namespace Start_To_Finish.Hubs
     public class ChatHub : Hub //added string Name to all methods
     {
         private readonly ApplicationDbContext _context;
-        private readonly ToDoListMakersController _controller;
-        public ChatHub(ApplicationDbContext context, ToDoListMakersController controller)
+        public ChatHub(ApplicationDbContext context)
         {
             _context = context;
-            _controller = controller;
         }
 
-        public async Task ChangeColumnInDatabase(string noteId, string sourceId, string targetId)
+        public async Task ChangeColumnsInDatabase(string noteId, string sourceId, string targetId)
         {
             var noteToBeRemoved = _context.Notes.Where(n => n.Id == Int32.Parse(noteId)).FirstOrDefault();
             var toDoListMaker = _context.ToDoListMakers.Where(t => t.Id == noteToBeRemoved.ToDoListMakerId).FirstOrDefault();
@@ -29,14 +27,18 @@ namespace Start_To_Finish.Hubs
             {
                 if(targetId == "In Progress")
                 {
-                    toDoListMaker.NotesToDo.Remove(noteToBeRemoved);
-                    toDoListMaker.NotesInProgress.Add(noteToBeRemoved);
+                    //toDoListMaker.NotesToDo.Remove(noteToBeRemoved);
+                    //toDoListMaker.NotesInProgress.Add(noteToBeRemoved);
+                    noteToBeRemoved.isToDo = false;
+                    noteToBeRemoved.isInProgress = true;
                     await _context.SaveChangesAsync();
                 }
                 if (targetId == "Complete")
                 {
-                    toDoListMaker.NotesToDo.Remove(noteToBeRemoved);
-                    toDoListMaker.NotesComplete.Add(noteToBeRemoved);
+                    //toDoListMaker.NotesToDo.Remove(noteToBeRemoved);
+                    //toDoListMaker.NotesComplete.Add(noteToBeRemoved);
+                    noteToBeRemoved.isToDo = false;
+                    noteToBeRemoved.isComplete = true;
                     await _context.SaveChangesAsync();
                 }
             }
@@ -45,14 +47,18 @@ namespace Start_To_Finish.Hubs
             {
                 if (targetId == "To-do")
                 {
-                    toDoListMaker.NotesInProgress.Remove(noteToBeRemoved);
-                    toDoListMaker.NotesToDo.Add(noteToBeRemoved);
+                    //toDoListMaker.NotesInProgress.Remove(noteToBeRemoved);
+                    //toDoListMaker.NotesToDo.Add(noteToBeRemoved);
+                    noteToBeRemoved.isInProgress = false;
+                    noteToBeRemoved.isToDo = true;
                     await _context.SaveChangesAsync();
                 }
                 if (targetId == "Complete")
                 {
-                    toDoListMaker.NotesInProgress.Remove(noteToBeRemoved);
-                    toDoListMaker.NotesComplete.Add(noteToBeRemoved);
+                    //toDoListMaker.NotesInProgress.Remove(noteToBeRemoved);
+                    //toDoListMaker.NotesComplete.Add(noteToBeRemoved);
+                    noteToBeRemoved.isInProgress = false;
+                    noteToBeRemoved.isComplete = true;
                     await _context.SaveChangesAsync();
                 }
             }
@@ -61,14 +67,18 @@ namespace Start_To_Finish.Hubs
             {
                 if (targetId == "To-do")
                 {
-                    toDoListMaker.NotesComplete.Remove(noteToBeRemoved);
-                    toDoListMaker.NotesToDo.Add(noteToBeRemoved);
+                    //toDoListMaker.NotesComplete.Remove(noteToBeRemoved);
+                    //toDoListMaker.NotesToDo.Add(noteToBeRemoved);
+                    noteToBeRemoved.isComplete = false;
+                    noteToBeRemoved.isToDo = true;
                     await _context.SaveChangesAsync();
                 }
                 if (targetId == "In Progress")
                 {
-                    toDoListMaker.NotesComplete.Remove(noteToBeRemoved);
-                    toDoListMaker.NotesInProgress.Add(noteToBeRemoved);
+                    //toDoListMaker.NotesComplete.Remove(noteToBeRemoved);
+                    //toDoListMaker.NotesInProgress.Add(noteToBeRemoved);
+                    noteToBeRemoved.isComplete = false;
+                    noteToBeRemoved.isInProgress = true;
                     await _context.SaveChangesAsync();
                 }
             }

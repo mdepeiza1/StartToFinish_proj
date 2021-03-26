@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -16,6 +17,12 @@ namespace Start_To_Finish.Models
         public string YoutubeInfo { get; set; }
         public string GoogleMapsInfo { get; set; }
         public string SpotifyInfo { get; set; }
+        public bool isToDo { get; set; }
+        public bool isInProgress { get; set; }
+        public bool isComplete { get; set; }
+        [BindProperty, Required]
+        public string Option { get; set; } = "Neither";
+        public string[] Options = new[] { "Responsibility", "Learning Opportunity", "Neither" };
 
         [ForeignKey("ToDoListMaker")]
         public int ToDoListMakerId { get; set; }

@@ -17,9 +17,13 @@ namespace Start_To_Finish.Models
         [ForeignKey("IdentityUser")]
         public string IdentityUserId { get; set; }
         public IdentityUser IdentityUser { get; set; }
+        public IList<Note> Notes { get; set; }
+        //[ForeignKey("Note")]
+        //public ICollection<Note> NotesToDo { get; set; }
+        //[ForeignKey("Note")]
+        //public ICollection<Note> NotesInProgress { get; set; }
+        //[ForeignKey("Note")]
+        //public ICollection<Note> NotesComplete { get; set; }
 
-        public ICollection<Note> NotesToDo { get; set; }
-        public ICollection<Note> NotesInProgress { get; set; }
-        public ICollection<Note> NotesComplete { get; set; }
     }
 }

@@ -5,9 +5,13 @@
 
 //Added later
 
-var connection = new signalR.HubConnectionBuilder() /*may need const connection*/
-    .withUrl("/chatHub")
-    .build();
+var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build(); //this has an issue with draggable, also may need to be const
+
+//$(function () {
+//    $("#sortable1, #sortable2, #sortable3").sortable({
+//        connectWith: ".connectedSortable"
+//    }).disableSelection();
+//});
 
 $(function () {
     var kanbanCol = $('.panel-body');
@@ -26,9 +30,11 @@ $(function () {
 
 function draggableInit() {
     var sourceId;
+    var noteId;
 
     $('[draggable=true]').bind('dragstart', function (event) {
         sourceId = $(this).parent().attr('id');
+        noteId = $(this).attr('id');
         event.originalEvent.dataTransfer.setData("text/plain", event.target.getAttribute('id'));
     });
 
@@ -39,10 +45,17 @@ function draggableInit() {
     $('.panel-body').bind('drop', function (event) {
         var children = $(this).children();
         var targetId = children.attr('id');
-        var noteId = $(this).attr('id'); //added later
+
+        //var noteId = $(this).attr('id'); //added later
 
         if (sourceId != targetId) {
-            await connection.invoke("ChangeColumnInDatabase", noteId, sourceId, targetId);
+
+            setTimeout(function () {
+                connection.invoke("ChangeColumnsInDatabase", noteId, sourceId, targetId).catch(function (err) {
+                    return console.error(err.toString());
+                });; //added later
+            }, 1000);
+            
 
             var elementId = event.originalEvent.dataTransfer.getData("text/plain");
 
