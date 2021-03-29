@@ -43,22 +43,25 @@
                                             @item.NoteInfo
                                         </p>
                                         @*<form method="post">
-                                                @foreach (var option in Model.Options)
-                                                {
-                                                    @Html.RadioButtonFor(model => model.Option, option) @option<br />
-                                                }
-                                                <input type="submit" />
-                                            </form>*@
+            @foreach (var option in Model.Options)
+            {
+                @Html.RadioButtonFor(model => model.Option, option) @option<br />
+            }
+            <input type="submit" />
+        </form>*@
                                         <p>
                                             @item.Option
                                         </p>
-                                        <iframe width="200"
-                                                height="200"
-                                                style="border:0"
-                                                loading="lazy"
-                                                allowfullscreen
-                                                src='@String.Format("https://www.google.com/maps/embed/v1/place?key={0}&q={1},+", API_Key.GoogleKey, @item.GoogleMapsInfo)'>
-                                        </iframe>
+                                        @if (item.Option == "Responsibility")
+                                        {
+                                            <iframe width="200"
+                                                    height="200"
+                                                    style="border:0"
+                                                    loading="lazy"
+                                                    allowfullscreen
+                                                    src='@String.Format("https://www.google.com/maps/embed/v1/place?key={0}&q={1},+", API_Key.GoogleKey, @item.GoogleMapsInfo)'>
+                                            </iframe>
+                                        }
                                         <a asp-action="EditNote" asp-route-id="@item.Id">Edit</a>
                                         <a asp-action="EditOptions" asp-route-id="@item.Id">Edit Responsibility/Learning Opportunity</a>
                                     </div>
@@ -121,22 +124,25 @@
                                             @item.NoteInfo
                                         </p>
                                         @*<form method="post">
-                                                @foreach (var option in Model.Options)
-                                                {
-                                                    @Html.RadioButtonFor(model => model.Option, option) @option<br />
-                                                }
-                                                <input type="submit" />
-                                            </form>*@
+            @foreach (var option in Model.Options)
+            {
+                @Html.RadioButtonFor(model => model.Option, option) @option<br />
+            }
+            <input type="submit" />
+        </form>*@
                                         <p>
                                             @item.Option
                                         </p>
-                                        <iframe width="200"
-                                                height="200"
-                                                style="border:0"
-                                                loading="lazy"
-                                                allowfullscreen
-                                                src='@String.Format("https://www.google.com/maps/embed/v1/place?key={0}&q={1},+", API_Key.GoogleKey, @item.GoogleMapsInfo)'>
-                                        </iframe>
+                                        @if (item.Option == "Responsibility")
+                                        {
+                                            <iframe width="200"
+                                                    height="200"
+                                                    style="border:0"
+                                                    loading="lazy"
+                                                    allowfullscreen
+                                                    src='@String.Format("https://www.google.com/maps/embed/v1/place?key={0}&q={1},+", API_Key.GoogleKey, @item.GoogleMapsInfo)'>
+                                            </iframe>
+                                        }
                                         <p id="Timer @item.Id"></p>
                                         <script>
                                             //var jsonSettings = new JsonSerializerSettings();
@@ -213,19 +219,22 @@
                                             @item.NoteInfo
                                         </p>
                                         @*<form method="post">
-                                                <input type="radio" value="" id="Option" name="Option" />Male<br />
-                                                <input type="submit" />
-                                            </form>*@
+            <input type="radio" value="" id="Option" name="Option" />Male<br />
+            <input type="submit" />
+        </form>*@
                                         <p>
                                             @item.Option
                                         </p>
-                                        <iframe width="200"
-                                                height="200"
-                                                style="border:0"
-                                                loading="lazy"
-                                                allowfullscreen
-                                                src='@String.Format("https://www.google.com/maps/embed/v1/place?key={0}&q={1},+",  API_Key.GoogleKey, @item.GoogleMapsInfo)'>
-                                        </iframe>
+                                        @if (item.Option == "Responsibility")
+                                        {
+                                            <iframe width="200"
+                                                    height="200"
+                                                    style="border:0"
+                                                    loading="lazy"
+                                                    allowfullscreen
+                                                    src='@String.Format("https://www.google.com/maps/embed/v1/place?key={0}&q={1},+", API_Key.GoogleKey, @item.GoogleMapsInfo)'>
+                                            </iframe>
+                                        }
                                         <a asp-action="EditNote" asp-route-id="@item.Id">Edit Note</a>
                                         <a asp-action="EditOptions" asp-route-id="@item.Id">Edit Responsibility/Learning Opportunity</a>
                                     </div>
