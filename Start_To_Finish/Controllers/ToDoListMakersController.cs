@@ -150,7 +150,7 @@ namespace Start_To_Finish.Controllers
                     {
                         placeholderCompleteBool = false;
                         ViewBag.NotesCompleteBool = placeholderCompleteBool;
-                        ViewBag.NotesComplete = notesToDo;
+                        ViewBag.NotesComplete = notesComplete1;
                     }
                 }
                 else
@@ -207,10 +207,15 @@ namespace Start_To_Finish.Controllers
             var toDoListMaker = _context.ToDoListMakers.Where(t => t.IdentityUserId == userId).FirstOrDefault();
             var xs = _context.Notes.Where(n => n.isComplete == true
                    && n.ToDoListMakerId == toDoListMaker.Id).Select(n => n.Title).ToList();
-            var ys = _context.Notes.Where(n => n.isComplete == true
+            var ysNotInSeconds = _context.Notes.Where(n => n.isComplete == true
                    && n.ToDoListMakerId == toDoListMaker.Id).Select(n => n.ElapsedTime).ToList();
+            var ysInSeconds = new List<double>();
+            for(int i = 0; i < ysNotInSeconds.Count(); i++)
+            {
+                ysInSeconds.Add(ysNotInSeconds[i].TotalSeconds);
+            }
             ViewBag.Xs = new HtmlString(JsonConvert.SerializeObject(xs));
-            ViewBag.Ys = new HtmlString(JsonConvert.SerializeObject(ys));
+            ViewBag.Ys = new HtmlString(JsonConvert.SerializeObject(ysInSeconds));
             return View();
         }
 

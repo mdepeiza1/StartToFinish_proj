@@ -4,12 +4,12 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>GraphTimeSpentView</h1>
+@*<h1>GraphTimeSpentView</h1>
 <br>
-<br>
+<br>*@
 <div class="row">
     <div class="col-md-4">
-        <canvas id="chart" width="200" height="200"></canvas>
+        <canvas id="chart" width="400" height="400"></canvas>
     </div>
 </div>
 <script>
@@ -17,10 +17,10 @@ var ctx = document.getElementById('chart').getContext('2d');
 var pieChart = new Chart(ctx, {
     type: 'bar',
     data: {
-        labels: [@ViewBag.Xs], //xs 
+        labels: @ViewBag.Xs, //xs
         datasets: [{
-            label: 'Time Spent On Tasks',
-            data: [@ViewBag.Ys], //ys
+            label: 'Time Spent On Tasks In Seconds',
+            data: @ViewBag.Ys, //["13", "35"], //ys
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(54, 162, 235, 0.2)',

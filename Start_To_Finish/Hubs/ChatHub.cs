@@ -62,6 +62,7 @@ namespace Start_To_Finish.Hubs
                     //toDoListMaker.NotesInProgress.Remove(noteToBeRemoved);
                     //toDoListMaker.NotesComplete.Add(noteToBeRemoved);
                     noteToBeRemoved.EndDate = DateTime.Now;
+                    noteToBeRemoved.ElapsedTime = noteToBeRemoved.EndDate - noteToBeRemoved.StartDate;
                     noteToBeRemoved.isInProgress = false;
                     noteToBeRemoved.isComplete = true;
                     await _context.SaveChangesAsync();
