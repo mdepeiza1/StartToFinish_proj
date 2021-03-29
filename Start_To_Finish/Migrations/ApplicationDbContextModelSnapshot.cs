@@ -48,8 +48,8 @@ namespace Start_To_Finish.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "86a5292a-c898-44de-a1db-f78b0a2f2cd8",
-                            ConcurrencyStamp = "99f61360-61ee-4f0f-9aec-f59de18f32d7",
+                            Id = "e1c185de-d043-4879-81e3-9dc46c9cd3cd",
+                            ConcurrencyStamp = "2dab7fb7-9262-4fbe-ae08-5fe790842045",
                             Name = "ToDoListMaker",
                             NormalizedName = "ToDoListMaker"
                         });
@@ -231,6 +231,12 @@ namespace Start_To_Finish.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<TimeSpan>("ElapsedTime")
+                        .HasColumnType("time");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("GoogleMapsInfo")
                         .HasColumnType("nvarchar(max)");
 
@@ -243,6 +249,9 @@ namespace Start_To_Finish.Migrations
 
                     b.Property<string>("SpotifyInfo")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");

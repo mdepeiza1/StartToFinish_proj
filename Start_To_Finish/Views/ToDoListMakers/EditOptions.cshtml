@@ -45,6 +45,9 @@
                     @Html.RadioButtonFor(model => model.Option, option) @option<br />
                 }
             </div>
+            @Html.HiddenFor(model => model.StartDate)
+            @Html.HiddenFor(model => model.EndDate)
+            @Html.HiddenFor(model => model.ElapsedTime)
             @*<div class="form-group form-check">
             <label class="form-check-label">
                 <input class="form-check-input" asp-for="isToDo" /> @Html.DisplayNameFor(model => model.isToDo)

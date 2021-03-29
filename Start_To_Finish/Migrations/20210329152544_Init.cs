@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Start_To_Finish.Migrations
 {
-    public partial class database : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -241,6 +241,9 @@ namespace Start_To_Finish.Migrations
                     isInProgress = table.Column<bool>(nullable: false),
                     isComplete = table.Column<bool>(nullable: false),
                     Option = table.Column<string>(nullable: false),
+                    StartDate = table.Column<DateTime>(nullable: false),
+                    EndDate = table.Column<DateTime>(nullable: false),
+                    ElapsedTime = table.Column<TimeSpan>(nullable: false),
                     ToDoListMakerId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -257,7 +260,7 @@ namespace Start_To_Finish.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "86a5292a-c898-44de-a1db-f78b0a2f2cd8", "99f61360-61ee-4f0f-9aec-f59de18f32d7", "ToDoListMaker", "ToDoListMaker" });
+                values: new object[] { "e1c185de-d043-4879-81e3-9dc46c9cd3cd", "2dab7fb7-9262-4fbe-ae08-5fe790842045", "ToDoListMaker", "ToDoListMaker" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

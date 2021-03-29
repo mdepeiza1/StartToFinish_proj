@@ -4,9 +4,11 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Start_To_Finish.Data;
 using Start_To_Finish.Models;
 
@@ -201,6 +203,14 @@ namespace Start_To_Finish.Controllers
 
         public IActionResult GraphTimeSpentView()
         {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var toDoListMaker = _context.ToDoListMakers.Where(t => t.IdentityUserId == userId).FirstOrDefault();
+            var xs = _context.Notes.Where(n => n.isComplete == true
+                   && n.ToDoListMakerId == toDoListMaker.Id).Select(n => n.Title).ToList();
+            var ys = _context.Notes.Where(n => n.isComplete == true
+                   && n.ToDoListMakerId == toDoListMaker.Id).Select(n => n.ElapsedTime).ToList();
+            ViewBag.Xs = new HtmlString(JsonConvert.SerializeObject(xs));
+            ViewBag.Ys = new HtmlString(JsonConvert.SerializeObject(ys));
             return View();
         }
 
