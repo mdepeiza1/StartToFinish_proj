@@ -149,15 +149,16 @@
 //jsonSettings.DateFormatString = "dd/MM/yyy hh:mm:ss";
 //var modelFromDate = JsonConvert.SerializeObject(@item.StartDate, jsonSettings);
                                             //var start = Date.now();
-                                            var start = new Date(Date.parse("@item.StartDate.ToString()"));
+                                            var start@(item.Id) = new Date(Date.parse("@item.StartDate.ToString()"));
                                            //var start = new Date(Date.parse(modelFromDate));
                                             var myVar = setInterval(myTimer, 1000);
                                             function myTimer() {
                                                 var d = new Date();
-                                                var end = Date.now();
-                                                var elapsed = end - start;
+                                                var end@(item.Id) = Date.now();
+                                                var elapsed@(item.Id) = end@(item.Id) - start@(item.Id);
+                                                //debugger;
                                                //document.getElementById("demo " + "@item.Id").innerHTML = d.toLocaleTimeString();
-                                                document.getElementById("Timer " + "@item.Id").innerHTML = elapsed/1000;
+                                                document.getElementById("Timer " + "@item.Id").innerHTML = elapsed@(item.Id)/1000;
                                             }
                                         </script>
                                         <a asp-action="EditNote" asp-route-id="@item.Id">Edit</a>
