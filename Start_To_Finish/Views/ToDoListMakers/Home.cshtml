@@ -5,6 +5,54 @@
 }
 
 <!--<h1>Home</h1>-->
+<style>
+    /* Always set the map height explicitly to define the size of the div
+             * element that contains the map. */
+    /*#map {*/
+    /*height: 100%;
+                background-color: grey;*/
+    /*height: 200px;
+                width: 200px;
+                background-color: grey;
+            }*/
+
+    /* Optional: Makes the sample page fill the window. */
+    /* html,
+            body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }*/
+
+    /* TODO: Step 4A1: Make a generic sidebar. */
+    .open {
+        width: 250px;
+    }
+
+    /* Styling for place details */
+    .hero {
+        width: 100%;
+        height: auto;
+        max-height: 166px;
+        display: block;
+    }
+
+    .place,
+    p {
+        font-family: 'open sans', arial, sans-serif;
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    .details {
+        color: darkslategrey;
+    }
+
+    a {
+        text-decoration: none;
+        color: cadetblue;
+    }
+</style>
 
 <div class="container-fluid">
     <div id="sortableKanbanBoards" class="row">
@@ -43,24 +91,224 @@
                                             @item.NoteInfo
                                         </p>
                                         @*<form method="post">
-            @foreach (var option in Model.Options)
-            {
-                @Html.RadioButtonFor(model => model.Option, option) @option<br />
-            }
-            <input type="submit" />
-        </form>*@
+                                                @foreach (var option in Model.Options)
+                                                {
+                                                    @Html.RadioButtonFor(model => model.Option, option) @option<br />
+                                                }
+                                                <input type="submit" />
+                                            </form>*@
                                         <p>
                                             @item.Option
                                         </p>
                                         @if (item.Option == "Responsibility")
                                         {
-                                            <iframe width="200"
-                                                    height="200"
-                                                    style="border:0"
-                                                    loading="lazy"
-                                                    allowfullscreen
-                                                    src='@String.Format("https://www.google.com/maps/embed/v1/place?key={0}&q={1},+", API_Key.GoogleKey, @item.GoogleMapsInfo)'>
-                                            </iframe>
+                                            <div id="panel@(item.Id)" style="height: 100px;width: null;
+        background-color: white;
+        position: fixed;
+        z-index: 1;
+        overflow-x: hidden;
+        transition: all .2s ease-out;
+"></div>
+                                            <div id="map@(item.Id)" style="height:200px;width:200px;"></div>
+                                            @*<iframe width="200"
+                                                        height="200"
+                                                        style="border:0"
+                                                        loading="lazy"
+                                                        allowfullscreen
+                                                        src='@String.Format("https://www.google.com/maps/embed/v1/place?key={0}&q={1},+", API_Key.GoogleKey, @item.GoogleMapsInfo)'>
+                                                </iframe>*@
+                                            <!-- TODO: Step 1B, Add a map -->
+                                    <script>
+                                                let pos@(item.Id);
+let map@(item.Id);
+let bounds@(item.Id);
+let infoWindow@(item.Id);
+let currentInfoWindow@(item.Id);
+let service@(item.Id);
+let infoPane@(item.Id);
+function initMap@(item.Id)() {
+    // Initialize variables
+    bounds@(item.Id) = new google.maps.LatLngBounds();
+    infoWindow@(item.Id) = new google.maps.InfoWindow;
+    currentInfoWindow@(item.Id) = infoWindow@(item.Id);
+/* TODO: Step 4A3: Add a generic sidebar */
+    infoPane@(item.Id) = document.getElementById("panel@(item.Id)");
+
+    // Try HTML5 geolocation
+    if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(position => {
+        pos@(item.Id) = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+        };
+        map@(item.Id) = new google.maps.Map(document.getElementById("map@(item.Id)"), {
+        center: pos@(item.Id),
+        zoom: 15
+        });
+        bounds@(item.Id).extend(pos@(item.Id));
+
+        infoWindow@(item.Id).setPosition(pos@(item.Id));
+        infoWindow@(item.Id).setContent('Location found.');
+        infoWindow@(item.Id).open(map@(item.Id));
+        map@(item.Id).setCenter(pos@(item.Id));
+
+    /* TODO: Step 3B2, Call the Places Nearby Search */
+        getNearbyPlaces(pos@(item.Id));
+    }, () => {
+        // Browser supports geolocation, but user has denied permission
+        handleLocationError(true, infoWindow@(item.Id));
+    });
+    } else {
+    // Browser doesn't support geolocation
+    handleLocationError(false, infoWindow@(item.Id));
+    }
+}
+
+// Handle a geolocation error
+function handleLocationError(browserHasGeolocation, infoWindow) {
+    // Set default location to Sydney, Australia
+    pos@(item.Id) = {lat: -33.856, lng: 151.215};
+    map@(item.Id) = new google.maps.Map(document.getElementById("map@(item.Id)"), {
+    center: pos@(item.Id),
+    zoom: 15
+    });
+
+    // Display an InfoWindow at the map center
+    infoWindow@(item.Id).setPosition(pos@(item.Id));
+    infoWindow@(item.Id).setContent(browserHasGeolocation ?
+    'Geolocation permissions denied. Using default location.' :
+    'Error: Your browser doesn\'t support geolocation.');
+    infoWindow@(item.Id).open(map@(item.Id));
+    currentInfoWindow@(item.Id) = infoWindow@(item.Id);
+
+/* TODO: Step 3B3, Call the Places Nearby Search */
+    getNearbyPlaces(pos@(item.Id));
+}
+/* END TODO: Step 2, Geolocate your user */
+                                                /* TODO: Step 3B1, Call the Places Nearby Search */
+                                                function getNearbyPlaces(position) {
+                                                    let request@(item.Id) = {
+                                                        location: position,
+                                                        rankBy: google.maps.places.RankBy.DISTANCE,
+                                                        keyword: '@item.GoogleMapsInfo'
+                                                    };
+
+                                                    service@(item.Id) = new google.maps.places.PlacesService(map@(item.Id));
+                                                    service@(item.Id).nearbySearch(request@(item.Id), nearbyCallback);
+                                                }
+
+                                                // Handle the results (up to 20) of the Nearby Search
+                                                function nearbyCallback(results, status) {
+                                                    if (status == google.maps.places.PlacesServiceStatus.OK) {
+                                                        createMarkers(results);
+                                                    }
+                                                }
+
+                                                /* TODO: Step 3C, Generate markers for search results */
+                                                // Set markers at the location of each place result
+                                                function createMarkers(places) {
+                                                    places.forEach(place => {
+                                                        let marker@(item.Id) = new google.maps.Marker({
+                                                            position: place.geometry.location,
+                                                            map: map@(item.Id),
+                                                            title: place.name
+                                                        });
+
+                                                        /* TODO: Step 4B: Add click listeners to the markers */
+                                                        google.maps.event.addListener(marker@(item.Id), 'click', () => {
+                                                            let request@(item.Id) = {
+                                                                placeId: place.place_id,
+                                                                fields: ['name', 'formatted_address', 'geometry', 'rating',
+                                                                    'website', 'photos']
+                                                            };
+
+                                                            /* Only fetch the details of a place when the user clicks on a marker.
+                                                            * If we fetch the details for all place results as soon as we get
+                                                            * the search response, we will hit API rate limits. */
+                                                            service@(item.Id).getDetails(request@(item.Id), (placeResult, status) => {
+                                                                showDetails(placeResult, marker@(item.Id), status)
+                                                            });
+                                                        });
+                                                        // Adjust the map bounds to include the location of this marker
+                                                        bounds@(item.Id).extend(place.geometry.location);
+                                                    });
+                                                    /* Once all the markers have been placed, adjust the bounds of the map to
+                                                    * show all the markers within the visible area. */
+                                                    map@(item.Id).fitBounds(bounds@(item.Id));
+                                                }
+
+                                                /* TODO: Step 4C: Show place details in an info window */
+                                                function showDetails(placeResult, marker, status) {
+                                                    if (status == google.maps.places.PlacesServiceStatus.OK) {
+                                                        let placeInfowindow@(item.Id) = new google.maps.InfoWindow();
+                                                        placeInfowindow@(item.Id).setContent('<div><strong>' + placeResult.name +
+                                                            '</strong><br>' + 'Rating: ' + placeResult.rating + '</div>');
+                                                        placeInfowindow@(item.Id).open(marker.map, marker);
+                                                        currentInfoWindow@(item.Id).close();
+                                                        currentInfoWindow@(item.Id) = placeInfowindow@(item.Id);
+                                                        showPanel(placeResult);
+                                                    } else {
+                                                        console.log('showDetails failed: ' + status);
+                                                    }
+                                                }
+                                                /* TODO: Step 4D: Load place details in a sidebar */
+                                                // Displays place details in a sidebar
+                                                function showPanel(placeResult) {
+                                                    // If infoPane is already open, close it
+                                                    if (infoPane@(item.Id).classList.contains("open")) {
+                                                        infoPane@(item.Id).classList.remove("open");
+                                                    }
+
+                                                    // Clear the previous details
+                                                    while (infoPane@(item.Id).lastChild) {
+                                                        infoPane@(item.Id).removeChild(infoPane@(item.Id).lastChild);
+                                                    }
+
+                                                    /* TODO: Step 4E: Display a Place Photo with the Place Details */
+
+                                                    // Add place details with text formatting
+                                                    let name@(item.Id) = document.createElement('h1');
+                                                    name@(item.Id).classList.add('place');
+                                                    name@(item.Id).textContent = placeResult.name;
+                                                    infoPane@(item.Id).appendChild(name@(item.Id));
+                                                    if (placeResult.rating != null) {
+                                                        let rating@(item.Id) = document.createElement('p');
+                                                        rating@(item.Id).classList.add('details');
+                                                        rating@(item.Id).textContent = `Rating: ${placeResult.rating} \u272e`;
+                                                        infoPane@(item.Id).appendChild(rating@(item.Id));
+                                                    }
+                                                    let address@(item.Id) = document.createElement('p');
+                                                    address@(item.Id).classList.add('details');
+                                                    address@(item.Id).textContent = placeResult.formatted_address;
+                                                    infoPane@(item.Id).appendChild(address@(item.Id));
+                                                    if (placeResult.website) {
+                                                        let websitePara@(item.Id) = document.createElement('p');
+                                                        let websiteLink@(item.Id) = document.createElement('a');
+                                                        let websiteUrl@(item.Id) = document.createTextNode(placeResult.website);
+                                                        websiteLink@(item.Id).appendChild(websiteUrl@(item.Id));
+                                                        websiteLink@(item.Id).title = placeResult.website;
+                                                        websiteLink@(item.Id).href = placeResult.website;
+                                                        websitePara@(item.Id).appendChild(websiteLink@(item.Id));
+                                                        infoPane@(item.Id).appendChild(websitePara@(item.Id));
+                                                    }
+                                                    /* TODO: Step 4E: Display a Place Photo with the Place Details */
+                                                    // Add the primary photo, if there is one
+                                                    if (placeResult.photos != null) {
+                                                        let firstPhoto@(item.Id) = placeResult.photos[0];
+                                                        let photo@(item.Id) = document.createElement('img');
+                                                        photo@(item.Id).classList.add('hero');
+                                                        photo@(item.Id).src = firstPhoto@(item.Id).getUrl();
+                                                        infoPane@(item.Id).appendChild(photo@(item.Id));
+                                                    }
+                                                    // Open the infoPane
+                                                    infoPane@(item.Id).classList.add("open");
+                                                }
+                                    </script>
+
+                                            <!-- TODO: Step 1C, Get an API key -->
+                                            <!-- TODO: Step 3A, Load the Places Library -->
+                                            <script async defer src='@String.Format("https://maps.googleapis.com/maps/api/js?key={0}&libraries=places&callback=initMap{1}", API_Key.GoogleKey, @item.Id)'>
+                                            </script>
                                         }
                                         <a asp-action="EditNote" asp-route-id="@item.Id">Edit</a>
                                         <a asp-action="EditOptions" asp-route-id="@item.Id">Edit Responsibility/Learning Opportunity</a>
@@ -135,13 +383,213 @@
                                         </p>
                                         @if (item.Option == "Responsibility")
                                         {
-                                            <iframe width="200"
-                                                    height="200"
-                                                    style="border:0"
-                                                    loading="lazy"
-                                                    allowfullscreen
-                                                    src='@String.Format("https://www.google.com/maps/embed/v1/place?key={0}&q={1},+", API_Key.GoogleKey, @item.GoogleMapsInfo)'>
-                                            </iframe>
+                                            <div id="panel@(item.Id)" style="height: 100px;width: null;
+        background-color: white;
+        position: fixed;
+        z-index: 1;
+        overflow-x: hidden;
+        transition: all .2s ease-out;
+"></div>
+                                            <div id="map@(item.Id)" style="height:200px;width:200px;"></div>
+                                            @*<iframe width="200"
+                    height="200"
+                    style="border:0"
+                    loading="lazy"
+                    allowfullscreen
+                    src='@String.Format("https://www.google.com/maps/embed/v1/place?key={0}&q={1},+", API_Key.GoogleKey, @item.GoogleMapsInfo)'>
+            </iframe>*@
+                                            <!-- TODO: Step 1B, Add a map -->
+                                            <script>
+                                                let pos;
+let map;
+let bounds;
+let infoWindow;
+let currentInfoWindow;
+let service;
+let infoPane;
+function initMap() {
+    // Initialize variables
+    bounds = new google.maps.LatLngBounds();
+    infoWindow = new google.maps.InfoWindow;
+    currentInfoWindow = infoWindow;
+/* TODO: Step 4A3: Add a generic sidebar */
+    infoPane = document.getElementById("panel@(item.Id)");
+
+    // Try HTML5 geolocation
+    if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(position => {
+        pos = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+        };
+        map = new google.maps.Map(document.getElementById("map@(item.Id)"), {
+        center: pos,
+        zoom: 15
+        });
+        bounds.extend(pos);
+
+        infoWindow.setPosition(pos);
+        infoWindow.setContent('Location found.');
+        infoWindow.open(map);
+        map.setCenter(pos);
+
+    /* TODO: Step 3B2, Call the Places Nearby Search */
+        getNearbyPlaces(pos);
+    }, () => {
+        // Browser supports geolocation, but user has denied permission
+        handleLocationError(true, infoWindow);
+    });
+    } else {
+    // Browser doesn't support geolocation
+    handleLocationError(false, infoWindow);
+    }
+}
+
+// Handle a geolocation error
+function handleLocationError(browserHasGeolocation, infoWindow) {
+    // Set default location to Sydney, Australia
+    pos = {lat: -33.856, lng: 151.215};
+    map = new google.maps.Map(document.getElementById("map@(item.Id)"), {
+    center: pos,
+    zoom: 15
+    });
+
+    // Display an InfoWindow at the map center
+    infoWindow.setPosition(pos);
+    infoWindow.setContent(browserHasGeolocation ?
+    'Geolocation permissions denied. Using default location.' :
+    'Error: Your browser doesn\'t support geolocation.');
+    infoWindow.open(map);
+    currentInfoWindow = infoWindow;
+
+/* TODO: Step 3B3, Call the Places Nearby Search */
+    getNearbyPlaces(pos);
+}
+/* END TODO: Step 2, Geolocate your user */
+                                                /* TODO: Step 3B1, Call the Places Nearby Search */
+                                                function getNearbyPlaces(position) {
+                                                    let request = {
+                                                        location: position,
+                                                        rankBy: google.maps.places.RankBy.DISTANCE,
+                                                        keyword: '@item.GoogleMapsInfo'
+                                                    };
+
+                                                    service = new google.maps.places.PlacesService(map);
+                                                    service.nearbySearch(request, nearbyCallback);
+                                                }
+
+                                                // Handle the results (up to 20) of the Nearby Search
+                                                function nearbyCallback(results, status) {
+                                                    if (status == google.maps.places.PlacesServiceStatus.OK) {
+                                                        createMarkers(results);
+                                                    }
+                                                }
+
+                                                /* TODO: Step 3C, Generate markers for search results */
+                                                // Set markers at the location of each place result
+                                                function createMarkers(places) {
+                                                    places.forEach(place => {
+                                                        let marker = new google.maps.Marker({
+                                                            position: place.geometry.location,
+                                                            map: map,
+                                                            title: place.name
+                                                        });
+
+                                                        /* TODO: Step 4B: Add click listeners to the markers */
+                                                        google.maps.event.addListener(marker, 'click', () => {
+                                                            let request = {
+                                                                placeId: place.place_id,
+                                                                fields: ['name', 'formatted_address', 'geometry', 'rating',
+                                                                    'website', 'photos']
+                                                            };
+
+                                                            /* Only fetch the details of a place when the user clicks on a marker.
+                                                            * If we fetch the details for all place results as soon as we get
+                                                            * the search response, we will hit API rate limits. */
+                                                            service.getDetails(request, (placeResult, status) => {
+                                                                showDetails(placeResult, marker, status)
+                                                            });
+                                                        });
+                                                        // Adjust the map bounds to include the location of this marker
+                                                        bounds.extend(place.geometry.location);
+                                                    });
+                                                    /* Once all the markers have been placed, adjust the bounds of the map to
+                                                    * show all the markers within the visible area. */
+                                                    map.fitBounds(bounds);
+                                                }
+
+                                                /* TODO: Step 4C: Show place details in an info window */
+                                                function showDetails(placeResult, marker, status) {
+                                                    if (status == google.maps.places.PlacesServiceStatus.OK) {
+                                                        let placeInfowindow = new google.maps.InfoWindow();
+                                                        placeInfowindow.setContent('<div><strong>' + placeResult.name +
+                                                            '</strong><br>' + 'Rating: ' + placeResult.rating + '</div>');
+                                                        placeInfowindow.open(marker.map, marker);
+                                                        currentInfoWindow.close();
+                                                        currentInfoWindow = placeInfowindow;
+                                                        showPanel(placeResult);
+                                                    } else {
+                                                        console.log('showDetails failed: ' + status);
+                                                    }
+                                                }
+                                                /* TODO: Step 4D: Load place details in a sidebar */
+                                                // Displays place details in a sidebar
+                                                function showPanel(placeResult) {
+                                                    // If infoPane is already open, close it
+                                                    if (infoPane.classList.contains("open")) {
+                                                        infoPane.classList.remove("open");
+                                                    }
+
+                                                    // Clear the previous details
+                                                    while (infoPane.lastChild) {
+                                                        infoPane.removeChild(infoPane.lastChild);
+                                                    }
+
+                                                    /* TODO: Step 4E: Display a Place Photo with the Place Details */
+
+                                                    // Add place details with text formatting
+                                                    let name = document.createElement('h1');
+                                                    name.classList.add('place');
+                                                    name.textContent = placeResult.name;
+                                                    infoPane.appendChild(name);
+                                                    if (placeResult.rating != null) {
+                                                        let rating = document.createElement('p');
+                                                        rating.classList.add('details');
+                                                        rating.textContent = `Rating: ${placeResult.rating} \u272e`;
+                                                        infoPane.appendChild(rating);
+                                                    }
+                                                    let address = document.createElement('p');
+                                                    address.classList.add('details');
+                                                    address.textContent = placeResult.formatted_address;
+                                                    infoPane.appendChild(address);
+                                                    if (placeResult.website) {
+                                                        let websitePara = document.createElement('p');
+                                                        let websiteLink = document.createElement('a');
+                                                        let websiteUrl = document.createTextNode(placeResult.website);
+                                                        websiteLink.appendChild(websiteUrl);
+                                                        websiteLink.title = placeResult.website;
+                                                        websiteLink.href = placeResult.website;
+                                                        websitePara.appendChild(websiteLink);
+                                                        infoPane.appendChild(websitePara);
+                                                    }
+                                                    /* TODO: Step 4E: Display a Place Photo with the Place Details */
+                                                    // Add the primary photo, if there is one
+                                                    if (placeResult.photos != null) {
+                                                        let firstPhoto = placeResult.photos[0];
+                                                        let photo = document.createElement('img');
+                                                        photo.classList.add('hero');
+                                                        photo.src = firstPhoto.getUrl();
+                                                        infoPane.appendChild(photo);
+                                                    }
+                                                    // Open the infoPane
+                                                    infoPane.classList.add("open");
+                                                }
+                                            </script>
+
+                                            <!-- TODO: Step 1C, Get an API key -->
+                                            <!-- TODO: Step 3A, Load the Places Library -->
+                                            <script async defer src='@String.Format("https://maps.googleapis.com/maps/api/js?key={0}&libraries=places&callback=initMap",API_Key.GoogleKey)'>
+                                            </script>
                                         }
                                         <p id="Timer @item.Id"></p>
                                         <script>
@@ -228,13 +676,214 @@
                                         </p>
                                         @if (item.Option == "Responsibility")
                                         {
-                                            <iframe width="200"
-                                                    height="200"
-                                                    style="border:0"
-                                                    loading="lazy"
-                                                    allowfullscreen
-                                                    src='@String.Format("https://www.google.com/maps/embed/v1/place?key={0}&q={1},+", API_Key.GoogleKey, @item.GoogleMapsInfo)'>
-                                            </iframe>
+
+                                            <div id="panel@(item.Id)" style="height: 100px;width: null;
+        background-color: white;
+        position: fixed;
+        z-index: 1;
+        overflow-x: hidden;
+        transition: all .2s ease-out;
+"></div>
+                                            <div id="map@(item.Id)" style="height:200px;width:200px;"></div>
+                                            @*<iframe width="200"
+                    height="200"
+                    style="border:0"
+                    loading="lazy"
+                    allowfullscreen
+                    src='@String.Format("https://www.google.com/maps/embed/v1/place?key={0}&q={1},+", API_Key.GoogleKey, @item.GoogleMapsInfo)'>
+            </iframe>*@
+                                            <!-- TODO: Step 1B, Add a map -->
+                                            <script>
+                                                let pos@(item.Id);
+let map@(item.Id);
+let bounds@(item.Id);
+let infoWindow@(item.Id);
+let currentInfoWindow@(item.Id);
+let service@(item.Id);
+let infoPane@(item.Id);
+function initMap@(item.Id)() {
+    // Initialize variables
+    bounds@(item.Id) = new google.maps.LatLngBounds();
+    infoWindow@(item.Id) = new google.maps.InfoWindow;
+    currentInfoWindow@(item.Id) = infoWindow@(item.Id);
+/* TODO: Step 4A3: Add a generic sidebar */
+    infoPane@(item.Id) = document.getElementById("panel@(item.Id)");
+
+    // Try HTML5 geolocation
+    if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(position => {
+        pos@(item.Id) = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+        };
+        map@(item.Id) = new google.maps.Map(document.getElementById("map@(item.Id)"), {
+        center: pos@(item.Id),
+        zoom: 15
+        });
+        bounds@(item.Id).extend(pos@(item.Id));
+
+        infoWindow@(item.Id).setPosition(pos@(item.Id));
+        infoWindow@(item.Id).setContent('Location found.');
+        infoWindow@(item.Id).open(map@(item.Id));
+        map@(item.Id).setCenter(pos@(item.Id));
+
+    /* TODO: Step 3B2, Call the Places Nearby Search */
+        getNearbyPlaces(pos@(item.Id));
+    }, () => {
+        // Browser supports geolocation, but user has denied permission
+        handleLocationError(true, infoWindow@(item.Id));
+    });
+    } else {
+    // Browser doesn't support geolocation
+    handleLocationError(false, infoWindow@(item.Id));
+    }
+}
+
+// Handle a geolocation error
+function handleLocationError(browserHasGeolocation, infoWindow) {
+    // Set default location to Sydney, Australia
+    pos@(item.Id) = {lat: -33.856, lng: 151.215};
+    map@(item.Id) = new google.maps.Map(document.getElementById("map@(item.Id)"), {
+    center: pos@(item.Id),
+    zoom: 15
+    });
+
+    // Display an InfoWindow at the map center
+    infoWindow@(item.Id).setPosition(pos@(item.Id));
+    infoWindow@(item.Id).setContent(browserHasGeolocation ?
+    'Geolocation permissions denied. Using default location.' :
+    'Error: Your browser doesn\'t support geolocation.');
+    infoWindow@(item.Id).open(map@(item.Id));
+    currentInfoWindow@(item.Id) = infoWindow@(item.Id);
+
+/* TODO: Step 3B3, Call the Places Nearby Search */
+    getNearbyPlaces(pos@(item.Id));
+}
+/* END TODO: Step 2, Geolocate your user */
+                                                /* TODO: Step 3B1, Call the Places Nearby Search */
+                                                function getNearbyPlaces(position) {
+                                                    let request@(item.Id) = {
+                                                        location: position,
+                                                        rankBy: google.maps.places.RankBy.DISTANCE,
+                                                        keyword: '@item.GoogleMapsInfo'
+                                                    };
+
+                                                    service@(item.Id) = new google.maps.places.PlacesService(map@(item.Id));
+                                                    service@(item.Id).nearbySearch(request@(item.Id), nearbyCallback);
+                                                }
+
+                                                // Handle the results (up to 20) of the Nearby Search
+                                                function nearbyCallback(results, status) {
+                                                    if (status == google.maps.places.PlacesServiceStatus.OK) {
+                                                        createMarkers(results);
+                                                    }
+                                                }
+
+                                                /* TODO: Step 3C, Generate markers for search results */
+                                                // Set markers at the location of each place result
+                                                function createMarkers(places) {
+                                                    places.forEach(place => {
+                                                        let marker@(item.Id) = new google.maps.Marker({
+                                                            position: place.geometry.location,
+                                                            map: map@(item.Id),
+                                                            title: place.name
+                                                        });
+
+                                                        /* TODO: Step 4B: Add click listeners to the markers */
+                                                        google.maps.event.addListener(marker@(item.Id), 'click', () => {
+                                                            let request@(item.Id) = {
+                                                                placeId: place.place_id,
+                                                                fields: ['name', 'formatted_address', 'geometry', 'rating',
+                                                                    'website', 'photos']
+                                                            };
+
+                                                            /* Only fetch the details of a place when the user clicks on a marker.
+                                                            * If we fetch the details for all place results as soon as we get
+                                                            * the search response, we will hit API rate limits. */
+                                                            service@(item.Id).getDetails(request@(item.Id), (placeResult, status) => {
+                                                                showDetails(placeResult, marker@(item.Id), status)
+                                                            });
+                                                        });
+                                                        // Adjust the map bounds to include the location of this marker
+                                                        bounds@(item.Id).extend(place.geometry.location);
+                                                    });
+                                                    /* Once all the markers have been placed, adjust the bounds of the map to
+                                                    * show all the markers within the visible area. */
+                                                    map@(item.Id).fitBounds(bounds@(item.Id));
+                                                }
+
+                                                /* TODO: Step 4C: Show place details in an info window */
+                                                function showDetails(placeResult, marker, status) {
+                                                    if (status == google.maps.places.PlacesServiceStatus.OK) {
+                                                        let placeInfowindow@(item.Id) = new google.maps.InfoWindow();
+                                                        placeInfowindow@(item.Id).setContent('<div><strong>' + placeResult.name +
+                                                            '</strong><br>' + 'Rating: ' + placeResult.rating + '</div>');
+                                                        placeInfowindow@(item.Id).open(marker.map, marker);
+                                                        currentInfoWindow@(item.Id).close();
+                                                        currentInfoWindow@(item.Id) = placeInfowindow@(item.Id);
+                                                        showPanel(placeResult);
+                                                    } else {
+                                                        console.log('showDetails failed: ' + status);
+                                                    }
+                                                }
+                                                /* TODO: Step 4D: Load place details in a sidebar */
+                                                // Displays place details in a sidebar
+                                                function showPanel(placeResult) {
+                                                    // If infoPane is already open, close it
+                                                    if (infoPane@(item.Id).classList.contains("open")) {
+                                                        infoPane@(item.Id).classList.remove("open");
+                                                    }
+
+                                                    // Clear the previous details
+                                                    while (infoPane@(item.Id).lastChild) {
+                                                        infoPane@(item.Id).removeChild(infoPane@(item.Id).lastChild);
+                                                    }
+
+                                                    /* TODO: Step 4E: Display a Place Photo with the Place Details */
+
+                                                    // Add place details with text formatting
+                                                    let name@(item.Id) = document.createElement('h1');
+                                                    name@(item.Id).classList.add('place');
+                                                    name@(item.Id).textContent = placeResult.name;
+                                                    infoPane@(item.Id).appendChild(name@(item.Id));
+                                                    if (placeResult.rating != null) {
+                                                        let rating@(item.Id) = document.createElement('p');
+                                                        rating@(item.Id).classList.add('details');
+                                                        rating@(item.Id).textContent = `Rating: ${placeResult.rating} \u272e`;
+                                                        infoPane@(item.Id).appendChild(rating@(item.Id));
+                                                    }
+                                                    let address@(item.Id) = document.createElement('p');
+                                                    address@(item.Id).classList.add('details');
+                                                    address@(item.Id).textContent = placeResult.formatted_address;
+                                                    infoPane@(item.Id).appendChild(address@(item.Id));
+                                                    if (placeResult.website) {
+                                                        let websitePara@(item.Id) = document.createElement('p');
+                                                        let websiteLink@(item.Id) = document.createElement('a');
+                                                        let websiteUrl@(item.Id) = document.createTextNode(placeResult.website);
+                                                        websiteLink@(item.Id).appendChild(websiteUrl@(item.Id));
+                                                        websiteLink@(item.Id).title = placeResult.website;
+                                                        websiteLink@(item.Id).href = placeResult.website;
+                                                        websitePara@(item.Id).appendChild(websiteLink@(item.Id));
+                                                        infoPane@(item.Id).appendChild(websitePara@(item.Id));
+                                                    }
+                                                    /* TODO: Step 4E: Display a Place Photo with the Place Details */
+                                                    // Add the primary photo, if there is one
+                                                    if (placeResult.photos != null) {
+                                                        let firstPhoto@(item.Id) = placeResult.photos[0];
+                                                        let photo@(item.Id) = document.createElement('img');
+                                                        photo@(item.Id).classList.add('hero');
+                                                        photo@(item.Id).src = firstPhoto@(item.Id).getUrl();
+                                                        infoPane@(item.Id).appendChild(photo@(item.Id));
+                                                    }
+                                                    // Open the infoPane
+                                                    infoPane@(item.Id).classList.add("open");
+                                                }
+                                            </script>
+
+                                            <!-- TODO: Step 1C, Get an API key -->
+                                            <!-- TODO: Step 3A, Load the Places Library -->
+                                            <script async defer src='@String.Format("https://maps.googleapis.com/maps/api/js?key={0}&libraries=places&callback=initMap{1}", API_Key.GoogleKey, @item.Id)'>
+                                            </script>
                                         }
                                         <a asp-action="EditNote" asp-route-id="@item.Id">Edit Note</a>
                                         <a asp-action="EditOptions" asp-route-id="@item.Id">Edit Responsibility/Learning Opportunity</a>
