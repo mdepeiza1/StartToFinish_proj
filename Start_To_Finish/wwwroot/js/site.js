@@ -69,10 +69,15 @@ function draggableInit() {
 
                 $('#processing-modal').modal('toggle'); // after post
             }, 1000);
-
         }
 
         event.preventDefault();
+        if (sourceId != targetId) {
+            setTimeout(function () {
+                window.location.reload(true);
+            }, 1000);
+            //return false;
+        }
     });
 }
 

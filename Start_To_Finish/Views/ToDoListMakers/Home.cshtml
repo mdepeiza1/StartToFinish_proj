@@ -392,12 +392,12 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
                                             @item.NoteInfo
                                         </p>
                                         @*<form method="post">
-                                                @foreach (var option in Model.Options)
-                                                {
-                                                    @Html.RadioButtonFor(model => model.Option, option) @option<br />
-                                                }
-                                                <input type="submit" />
-                                            </form>*@
+            @foreach (var option in Model.Options)
+            {
+                @Html.RadioButtonFor(model => model.Option, option) @option<br />
+            }
+            <input type="submit" />
+        </form>*@
                                         <p>
                                             @item.Option
                                         </p>
@@ -412,12 +412,12 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
 "></div>
                                             <div id="map@(item.Id)" style="height:200px;width:200px;"></div>
                                             @*<iframe width="200"
-                                                        height="200"
-                                                        style="border:0"
-                                                        loading="lazy"
-                                                        allowfullscreen
-                                                        src='@String.Format("https://www.google.com/maps/embed/v1/place?key={0}&q={1},+", API_Key.GoogleKey, @item.GoogleMapsInfo)'>
-                                                </iframe>*@
+                    height="200"
+                    style="border:0"
+                    loading="lazy"
+                    allowfullscreen
+                    src='@String.Format("https://www.google.com/maps/embed/v1/place?key={0}&q={1},+", API_Key.GoogleKey, @item.GoogleMapsInfo)'>
+            </iframe>*@
                                             <!-- TODO: Step 1B, Add a map -->
                                             <script>
                                                 let pos;
@@ -611,6 +611,27 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
                                             <script async defer src='@String.Format("https://maps.googleapis.com/maps/api/js?key={0}&libraries=places&callback=initMap",API_Key.GoogleKey)'>
                                             </script>
                                         }
+
+                                        @if (item.Option == "Learning Opportunity")
+                                        {
+                                            <form id="form">
+                                                <div class="form-group">
+                                                    <input type="text" id="search" value="@item.YoutubeInfo" disabled />
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="submit" class="btn btn-danger" value="Search">
+                                                </div>
+                                                @Html.Hidden("API_KEY", API_Key.YoutubeKey)
+                                            </form>
+
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="videos">
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
                                         <p id="Timer @item.Id"></p>
                                         <script>
                                             //var jsonSettings = new JsonSerializerSettings();
@@ -688,9 +709,9 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
                                             @item.NoteInfo
                                         </p>
                                         @*<form method="post">
-                                                <input type="radio" value="" id="Option" name="Option" />Male<br />
-                                                <input type="submit" />
-                                            </form>*@
+            <input type="radio" value="" id="Option" name="Option" />Male<br />
+            <input type="submit" />
+        </form>*@
                                         <p>
                                             @item.Option
                                         </p>
@@ -706,12 +727,12 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
 "></div>
                                             <div id="map@(item.Id)" style="height:200px;width:200px;"></div>
                                             @*<iframe width="200"
-                                                        height="200"
-                                                        style="border:0"
-                                                        loading="lazy"
-                                                        allowfullscreen
-                                                        src='@String.Format("https://www.google.com/maps/embed/v1/place?key={0}&q={1},+", API_Key.GoogleKey, @item.GoogleMapsInfo)'>
-                                                </iframe>*@
+                    height="200"
+                    style="border:0"
+                    loading="lazy"
+                    allowfullscreen
+                    src='@String.Format("https://www.google.com/maps/embed/v1/place?key={0}&q={1},+", API_Key.GoogleKey, @item.GoogleMapsInfo)'>
+            </iframe>*@
                                             <!-- TODO: Step 1B, Add a map -->
                                             <script>
                                                 let pos@(item.Id);
@@ -904,6 +925,27 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
                                             <!-- TODO: Step 3A, Load the Places Library -->
                                             <script async defer src='@String.Format("https://maps.googleapis.com/maps/api/js?key={0}&libraries=places&callback=initMap{1}", API_Key.GoogleKey, @item.Id)'>
                                             </script>
+                                        }
+
+                                        @if (item.Option == "Learning Opportunity")
+                                        {
+                                            <form id="form">
+                                                <div class="form-group">
+                                                    <input type="text" id="search" value="@item.YoutubeInfo" disabled />
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="submit" class="btn btn-danger" value="Search">
+                                                </div>
+                                                @Html.Hidden("API_KEY", API_Key.YoutubeKey)
+                                            </form>
+
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="videos">
+
+                                                    </div>
+                                                </div>
+                                            </div>
                                         }
                                         <a asp-action="EditNote" asp-route-id="@item.Id">Edit Note</a>
                                         <a asp-action="EditOptions" asp-route-id="@item.Id">Edit Responsibility/Learning Opportunity</a>
