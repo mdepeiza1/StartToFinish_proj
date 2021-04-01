@@ -91,12 +91,12 @@
                                             @item.NoteInfo
                                         </p>
                                         @*<form method="post">
-                                                @foreach (var option in Model.Options)
-                                                {
-                                                    @Html.RadioButtonFor(model => model.Option, option) @option<br />
-                                                }
-                                                <input type="submit" />
-                                            </form>*@
+            @foreach (var option in Model.Options)
+            {
+                @Html.RadioButtonFor(model => model.Option, option) @option<br />
+            }
+            <input type="submit" />
+        </form>*@
                                         <p>
                                             @item.Option
                                         </p>
@@ -111,12 +111,12 @@
 "></div>
                                             <div id="map@(item.Id)" style="height:200px;width:200px;"></div>
                                             @*<iframe width="200"
-                                                        height="200"
-                                                        style="border:0"
-                                                        loading="lazy"
-                                                        allowfullscreen
-                                                        src='@String.Format("https://www.google.com/maps/embed/v1/place?key={0}&q={1},+", API_Key.GoogleKey, @item.GoogleMapsInfo)'>
-                                                </iframe>*@
+                    height="200"
+                    style="border:0"
+                    loading="lazy"
+                    allowfullscreen
+                    src='@String.Format("https://www.google.com/maps/embed/v1/place?key={0}&q={1},+", API_Key.GoogleKey, @item.GoogleMapsInfo)'>
+            </iframe>*@
                                             <!-- TODO: Step 1B, Add a map -->
                                             <script>
                                                 let pos@(item.Id);
@@ -312,23 +312,28 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
                                         }
                                         @if (item.Option == "Learning Opportunity")
                                         {
-                                    <form id="form">
-                                        <div class="form-group">
-                                            <input type="text" id="search" value="@item.YoutubeInfo" disabled />
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="submit" class="btn btn-danger" value="Search">
-                                        </div>
-                                        @Html.Hidden("API_KEY", API_Key.YoutubeKey)
-                                    </form>
+                                            <form id="form">
+                                                <div class="form-group">
+                                                    <input type="text" id="search@(item.Id)" value="@item.YoutubeInfo" disabled />
+                                                </div>
+                                                <div class="form-group">
+                                                    @*<input type="submit" class="btn btn-danger" value="Search">*@
+                                                    @Html.Hidden("API_KEY", API_Key.YoutubeKey)
+                                                    @Html.Hidden("itemId", (string)item.Id.ToString())
+                                                    <input type="button" class="submitbut" value="Search">
+                                                </div>
+                                            </form>
 
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <div id="videos">
+                                                    <div id="videos@(item.Id)">
 
                                                     </div>
                                                 </div>
                                             </div>
+                                            <script>
+
+                                            </script>
                                         }
                                         <a asp-action="EditNote" asp-route-id="@item.Id">Edit</a>
                                         <a asp-action="EditOptions" asp-route-id="@item.Id">Edit Responsibility/Learning Opportunity</a>
@@ -616,17 +621,19 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
                                         {
                                             <form id="form">
                                                 <div class="form-group">
-                                                    <input type="text" id="search" value="@item.YoutubeInfo" disabled />
+                                                    <input type="text" id="search@(item.Id)" value="@item.YoutubeInfo" disabled />
                                                 </div>
                                                 <div class="form-group">
-                                                    <input type="submit" class="btn btn-danger" value="Search">
+                                                    @*<input type="submit" class="btn btn-danger" value="Search">*@
+                                                    @Html.Hidden("API_KEY", API_Key.YoutubeKey)
+                                                    @Html.Hidden("itemId", (string)item.Id.ToString())
+                                                    <input type="button" class="submitbut" value="Search">
                                                 </div>
-                                                @Html.Hidden("API_KEY", API_Key.YoutubeKey)
                                             </form>
 
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <div id="videos">
+                                                    <div id="videos@(item.Id)">
 
                                                     </div>
                                                 </div>
@@ -931,17 +938,19 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
                                         {
                                             <form id="form">
                                                 <div class="form-group">
-                                                    <input type="text" id="search" value="@item.YoutubeInfo" disabled />
+                                                    <input type="text" id="search@(item.Id)" value="@item.YoutubeInfo" disabled />
                                                 </div>
                                                 <div class="form-group">
-                                                    <input type="submit" class="btn btn-danger" value="Search">
+                                                    @*<input type="submit" class="btn btn-danger" value="Search">*@
+                                                    @Html.Hidden("API_KEY", API_Key.YoutubeKey)
+                                                    @Html.Hidden("itemId", (string)item.Id.ToString())
+                                                    <input type="button" class="submitbut" value="Search">
                                                 </div>
-                                                @Html.Hidden("API_KEY", API_Key.YoutubeKey)
                                             </form>
 
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <div id="videos">
+                                                    <div id="videos@(item.Id)">
 
                                                     </div>
                                                 </div>
