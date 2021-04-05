@@ -102,213 +102,16 @@
                                         </p>
                                         @if (item.Option == "Responsibility")
                                         {
-                                            <div id="panel@(item.Id)" style="height: 100px;width: null;
+                                            @Html.Hidden("GoogleMapsInfo", (string)item.GoogleMapsInfo)
+                                            <div id="panel@(item.Id)" class="panels" style="height: 100px;width: null;
         background-color: white;
         position: fixed;
         z-index: 1;
         overflow-x: hidden;
         transition: all .2s ease-out;
 "></div>
-                                            <div id="map@(item.Id)" style="height:200px;width:200px;"></div>
-                                            @*<iframe width="200"
-                    height="200"
-                    style="border:0"
-                    loading="lazy"
-                    allowfullscreen
-                    src='@String.Format("https://www.google.com/maps/embed/v1/place?key={0}&q={1},+", API_Key.GoogleKey, @item.GoogleMapsInfo)'>
-            </iframe>*@
-                                            <!-- TODO: Step 1B, Add a map -->
-                                            <script>
-                                                let pos@(item.Id);
-let map@(item.Id);
-let bounds@(item.Id);
-let infoWindow@(item.Id);
-let currentInfoWindow@(item.Id);
-let service@(item.Id);
-let infoPane@(item.Id);
-function initMap@(item.Id)() {
-    // Initialize variables
-    bounds@(item.Id) = new google.maps.LatLngBounds();
-    infoWindow@(item.Id) = new google.maps.InfoWindow;
-    currentInfoWindow@(item.Id) = infoWindow@(item.Id);
-/* TODO: Step 4A3: Add a generic sidebar */
-    infoPane@(item.Id) = document.getElementById("panel@(item.Id)");
-
-    // Try HTML5 geolocation
-    if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(position => {
-        pos@(item.Id) = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-        };
-        map@(item.Id) = new google.maps.Map(document.getElementById("map@(item.Id)"), {
-        center: pos@(item.Id),
-        zoom: 15
-        });
-        bounds@(item.Id).extend(pos@(item.Id));
-
-        infoWindow@(item.Id).setPosition(pos@(item.Id));
-        infoWindow@(item.Id).setContent('Location found.');
-        infoWindow@(item.Id).open(map@(item.Id));
-        map@(item.Id).setCenter(pos@(item.Id));
-
-    /* TODO: Step 3B2, Call the Places Nearby Search */
-        getNearbyPlaces(pos@(item.Id));
-    }, () => {
-        // Browser supports geolocation, but user has denied permission
-        handleLocationError(true, infoWindow@(item.Id));
-    });
-    } else {
-    // Browser doesn't support geolocation
-    handleLocationError(false, infoWindow@(item.Id));
-    }
-}
-
-// Handle a geolocation error
-function handleLocationError(browserHasGeolocation, infoWindow) {
-    // Set default location to Sydney, Australia
-    pos@(item.Id) = {lat: -33.856, lng: 151.215};
-    map@(item.Id) = new google.maps.Map(document.getElementById("map@(item.Id)"), {
-    center: pos@(item.Id),
-    zoom: 15
-    });
-
-    // Display an InfoWindow at the map center
-    infoWindow@(item.Id).setPosition(pos@(item.Id));
-    infoWindow@(item.Id).setContent(browserHasGeolocation ?
-    'Geolocation permissions denied. Using default location.' :
-    'Error: Your browser doesn\'t support geolocation.');
-    infoWindow@(item.Id).open(map@(item.Id));
-    currentInfoWindow@(item.Id) = infoWindow@(item.Id);
-
-/* TODO: Step 3B3, Call the Places Nearby Search */
-    getNearbyPlaces(pos@(item.Id));
-}
-/* END TODO: Step 2, Geolocate your user */
-                                                /* TODO: Step 3B1, Call the Places Nearby Search */
-                                                function getNearbyPlaces(position) {
-                                                    let request@(item.Id) = {
-                                                        location: position,
-                                                        rankBy: google.maps.places.RankBy.DISTANCE,
-                                                        keyword: '@item.GoogleMapsInfo'
-                                                    };
-
-                                                    service@(item.Id) = new google.maps.places.PlacesService(map@(item.Id));
-                                                    service@(item.Id).nearbySearch(request@(item.Id), nearbyCallback);
-                                                }
-
-                                                // Handle the results (up to 20) of the Nearby Search
-                                                function nearbyCallback(results, status) {
-                                                    if (status == google.maps.places.PlacesServiceStatus.OK) {
-                                                        createMarkers(results);
-                                                    }
-                                                }
-
-                                                /* TODO: Step 3C, Generate markers for search results */
-                                                // Set markers at the location of each place result
-                                                function createMarkers(places) {
-                                                    places.forEach(place => {
-                                                        let marker@(item.Id) = new google.maps.Marker({
-                                                            position: place.geometry.location,
-                                                            map: map@(item.Id),
-                                                            title: place.name
-                                                        });
-
-                                                        /* TODO: Step 4B: Add click listeners to the markers */
-                                                        google.maps.event.addListener(marker@(item.Id), 'click', () => {
-                                                            let request@(item.Id) = {
-                                                                placeId: place.place_id,
-                                                                fields: ['name', 'formatted_address', 'geometry', 'rating',
-                                                                    'website', 'photos']
-                                                            };
-
-                                                            /* Only fetch the details of a place when the user clicks on a marker.
-                                                            * If we fetch the details for all place results as soon as we get
-                                                            * the search response, we will hit API rate limits. */
-                                                            service@(item.Id).getDetails(request@(item.Id), (placeResult, status) => {
-                                                                showDetails(placeResult, marker@(item.Id), status)
-                                                            });
-                                                        });
-                                                        // Adjust the map bounds to include the location of this marker
-                                                        bounds@(item.Id).extend(place.geometry.location);
-                                                    });
-                                                    /* Once all the markers have been placed, adjust the bounds of the map to
-                                                    * show all the markers within the visible area. */
-                                                    map@(item.Id).fitBounds(bounds@(item.Id));
-                                                }
-
-                                                /* TODO: Step 4C: Show place details in an info window */
-                                                function showDetails(placeResult, marker, status) {
-                                                    if (status == google.maps.places.PlacesServiceStatus.OK) {
-                                                        let placeInfowindow@(item.Id) = new google.maps.InfoWindow();
-                                                        placeInfowindow@(item.Id).setContent('<div><strong>' + placeResult.name +
-                                                            '</strong><br>' + 'Rating: ' + placeResult.rating + '</div>');
-                                                        placeInfowindow@(item.Id).open(marker.map, marker);
-                                                        currentInfoWindow@(item.Id).close();
-                                                        currentInfoWindow@(item.Id) = placeInfowindow@(item.Id);
-                                                        showPanel(placeResult);
-                                                    } else {
-                                                        console.log('showDetails failed: ' + status);
-                                                    }
-                                                }
-                                                /* TODO: Step 4D: Load place details in a sidebar */
-                                                // Displays place details in a sidebar
-                                                function showPanel(placeResult) {
-                                                    // If infoPane is already open, close it
-                                                    if (infoPane@(item.Id).classList.contains("open")) {
-                                                        infoPane@(item.Id).classList.remove("open");
-                                                    }
-
-                                                    // Clear the previous details
-                                                    while (infoPane@(item.Id).lastChild) {
-                                                        infoPane@(item.Id).removeChild(infoPane@(item.Id).lastChild);
-                                                    }
-
-                                                    /* TODO: Step 4E: Display a Place Photo with the Place Details */
-
-                                                    // Add place details with text formatting
-                                                    let name@(item.Id) = document.createElement('h1');
-                                                    name@(item.Id).classList.add('place');
-                                                    name@(item.Id).textContent = placeResult.name;
-                                                    infoPane@(item.Id).appendChild(name@(item.Id));
-                                                    if (placeResult.rating != null) {
-                                                        let rating@(item.Id) = document.createElement('p');
-                                                        rating@(item.Id).classList.add('details');
-                                                        rating@(item.Id).textContent = `Rating: ${placeResult.rating} \u272e`;
-                                                        infoPane@(item.Id).appendChild(rating@(item.Id));
-                                                    }
-                                                    let address@(item.Id) = document.createElement('p');
-                                                    address@(item.Id).classList.add('details');
-                                                    address@(item.Id).textContent = placeResult.formatted_address;
-                                                    infoPane@(item.Id).appendChild(address@(item.Id));
-                                                    if (placeResult.website) {
-                                                        let websitePara@(item.Id) = document.createElement('p');
-                                                        let websiteLink@(item.Id) = document.createElement('a');
-                                                        let websiteUrl@(item.Id) = document.createTextNode(placeResult.website);
-                                                        websiteLink@(item.Id).appendChild(websiteUrl@(item.Id));
-                                                        websiteLink@(item.Id).title = placeResult.website;
-                                                        websiteLink@(item.Id).href = placeResult.website;
-                                                        websitePara@(item.Id).appendChild(websiteLink@(item.Id));
-                                                        infoPane@(item.Id).appendChild(websitePara@(item.Id));
-                                                    }
-                                                    /* TODO: Step 4E: Display a Place Photo with the Place Details */
-                                                    // Add the primary photo, if there is one
-                                                    if (placeResult.photos != null) {
-                                                        let firstPhoto@(item.Id) = placeResult.photos[0];
-                                                        let photo@(item.Id) = document.createElement('img');
-                                                        photo@(item.Id).classList.add('hero');
-                                                        photo@(item.Id).src = firstPhoto@(item.Id).getUrl();
-                                                        infoPane@(item.Id).appendChild(photo@(item.Id));
-                                                    }
-                                                    // Open the infoPane
-                                                    infoPane@(item.Id).classList.add("open");
-                                                }
-                                            </script>
-
-                                            <!-- TODO: Step 1C, Get an API key -->
-                                            <!-- TODO: Step 3A, Load the Places Library -->
-                                            <script async defer src='@String.Format("https://maps.googleapis.com/maps/api/js?key={0}&libraries=places&callback=initMap{1}", API_Key.GoogleKey, @item.Id)'>
-                                            </script>
+                                            <div id="map@(item.Id)" class="maps" style="height:200px;width:200px;"></div>
+                                            <div id="@(item.GoogleMapsInfo)" class="mapinfo"></div>
                                         }
                                         @if (item.Option == "Learning Opportunity")
                                         {
@@ -408,73 +211,355 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
                                         </p>
                                         @if (item.Option == "Responsibility")
                                         {
-                                            <div id="panel@(item.Id)" style="height: 100px;width: null;
+                                            <div id="panel@(item.Id)" class="panels" style="height: 100px;width: null;
         background-color: white;
         position: fixed;
         z-index: 1;
         overflow-x: hidden;
         transition: all .2s ease-out;
 "></div>
-                                            <div id="map@(item.Id)" style="height:200px;width:200px;"></div>
-                                            @*<iframe width="200"
-                    height="200"
-                    style="border:0"
-                    loading="lazy"
-                    allowfullscreen
-                    src='@String.Format("https://www.google.com/maps/embed/v1/place?key={0}&q={1},+", API_Key.GoogleKey, @item.GoogleMapsInfo)'>
-            </iframe>*@
-                                            <!-- TODO: Step 1B, Add a map -->
-                                            <script>
+                                            <div id="map@(item.Id)" class="maps" style="height:200px;width:200px;"></div>
+                                            <div id="@(item.GoogleMapsInfo)" class="mapinfo"></div>
+                                        }
+
+                                        @if (item.Option == "Learning Opportunity")
+                                        {
+                                            <form id="form">
+                                                <div class="form-group">
+                                                    <input type="text" id="search@(item.Id)" value="@item.YoutubeInfo" disabled />
+                                                </div>
+                                                <div class="form-group">
+                                                    @*<input type="submit" class="btn btn-danger" value="Search">*@
+                                                    @Html.Hidden("API_KEY", API_Key.YoutubeKey)
+                                                    @Html.Hidden("itemId", (string)item.Id.ToString())
+                                                    <input type="button" class="submitbut" value="Search">
+                                                </div>
+                                            </form>
+
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="videos@(item.Id)">
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                        <p id="Timer @item.Id"></p>
+                                        <script>
+                                            //var jsonSettings = new JsonSerializerSettings();
+//jsonSettings.DateFormatString = "dd/MM/yyy hh:mm:ss";
+//var modelFromDate = JsonConvert.SerializeObject(@item.StartDate, jsonSettings);
+                                            //var start = Date.now();
+                                            var start@(item.Id) = new Date(Date.parse("@item.StartDate.ToString()"));
+                                           //var start = new Date(Date.parse(modelFromDate));
+                                            var myVar = setInterval(myTimer, 1000);
+                                            function myTimer() {
+                                                var d = new Date();
+                                                var end@(item.Id) = Date.now();
+                                                var elapsed@(item.Id) = end@(item.Id) - start@(item.Id);
+                                                //debugger;
+                                               //document.getElementById("demo " + "@item.Id").innerHTML = d.toLocaleTimeString();
+                                                document.getElementById("Timer " + "@item.Id").innerHTML = Math.round(elapsed@(item.Id)/1000);
+                                            }
+                                        </script>
+                                        <a asp-action="EditNote" asp-route-id="@item.Id">Edit</a>
+                                        <a asp-action="EditOptions" asp-route-id="@item.Id">Edit Responsibility/Learning Opportunity</a>
+                                    </div>
+                                </div>
+                            </article>
+                        }
+                    }
+                    @*<article class="kanban-entry grab" id="item-7" draggable="true">
+                            <div class="kanban-entry-inner">
+                                <div class="kanban-label">
+                                    <h2><a href="#">Test Card</a> <span>posted a status update</span></h2>
+                                    <p>
+                                        Just an example
+                                    </p>
+                                </div>
+                            </div>
+                        </article>*@
+                </div>
+            </div>
+            @*<div class="panel-footer">
+                    <a asp-action="CreateInProgress">Add a card...</a>
+                </div>*@
+        </div>
+        <!--sütun bitiş-->
+        <!--sütun başlangıç-->
+        <div class="panel panel-primary kanban-col">
+            <div class="panel-heading">
+                Complete
+                <i class="fa fa-2x fa-plus-circle pull-right"></i>
+            </div>
+            <div class="panel-body">
+                <div id="Complete" class="kanban-centered">
+
+                    @foreach (var item in ViewBag.NotesComplete)
+                    {
+
+                        @if (ViewBag.NotesCompleteBool)
+                        {
+                            <article class="kanban-entry grab" id="@item.Id" draggable="true">
+                                <div class="kanban-entry-inner">
+                                    <div class="kanban-label">
+                                        <h2><a href="#"> @item.Title</a></h2>
+                                        <p>
+                                            @item.NoteInfo
+                                        </p>
+                                    </div>
+                                </div>
+                            </article>
+                        }
+                        else
+                        {
+                            <article class="kanban-entry grab" id="@item.Id" draggable="true">
+                                <div class="kanban-entry-inner">
+                                    <div class="kanban-label">
+                                        <h2><a href="#"> @item.Title</a></h2>
+                                        <p>
+                                            @item.NoteInfo
+                                        </p>
+                                        @*<form method="post">
+            <input type="radio" value="" id="Option" name="Option" />Male<br />
+            <input type="submit" />
+        </form>*@
+                                        <p>
+                                            @item.Option
+                                        </p>
+                                        @if (item.Option == "Responsibility")
+                                        {
+
+                                            <div id="panel@(item.Id)" class="panels" style="height: 100px;width: null;
+        background-color: white;
+        position: fixed;
+        z-index: 1;
+        overflow-x: hidden;
+        transition: all .2s ease-out;
+"></div>
+                                            <div id="map@(item.Id)" class="maps" style="height:200px;width:200px;"></div>
+                                            <div id="@(item.GoogleMapsInfo)" class="mapinfo"></div>
+                                        }
+
+                                        @if (item.Option == "Learning Opportunity")
+                                        {
+                                            <form id="form">
+                                                <div class="form-group">
+                                                    <input type="text" id="search@(item.Id)" value="@item.YoutubeInfo" disabled />
+                                                </div>
+                                                <div class="form-group">
+                                                    @*<input type="submit" class="btn btn-danger" value="Search">*@
+                                                    @Html.Hidden("API_KEY", API_Key.YoutubeKey)
+                                                    @Html.Hidden("itemId", (string)item.Id.ToString())
+                                                    <input type="button" class="submitbut" value="Search">
+                                                </div>
+                                            </form>
+
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="videos@(item.Id)">
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                        <a asp-action="EditNote" asp-route-id="@item.Id">Edit Note</a>
+                                        <a asp-action="EditOptions" asp-route-id="@item.Id">Edit Responsibility/Learning Opportunity</a>
+                                    </div>
+                                </div>
+                            </article>
+                        }
+                    }
+                </div>
+            </div>
+            @*<div class="panel-footer">
+                    <a asp-action="CreateComplete">Add a card...</a>
+                </div>*@
+            @*<ul id="sortable1" class="connectedSortable">
+                    <li class="ui-state-default">Item 1</li>
+                    <li class="ui-state-default">Item 2</li>
+                    <li class="ui-state-default">Item 3</li>
+                    <li class="ui-state-default">Item 4</li>
+                    <li class="ui-state-default">Item 5</li>
+                </ul>
+
+                <ul id="sortable2" class="connectedSortable">
+                    <li class="ui-state-highlight">Item 1</li>
+                    <li class="ui-state-highlight">Item 2</li>
+                    <li class="ui-state-highlight">Item 3</li>
+                    <li class="ui-state-highlight">Item 4</li>
+                    <li class="ui-state-highlight">Item 5</li>
+                </ul>*@
+        </div>
+        <!--sütun bitiş-->
+
+
+    </div>
+</div>
+
+
+<!-- Static Modal -->
+<div class="modal modal-static fade" id="processing-modal" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center">
+                    <i class="fa fa-refresh fa-5x fa-spin"></i>
+                    <h4>Processing...</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/site.js"></script>
+<script>
+    //var API_KEY = <%=API_Key.YoutubeKey%>;
+</script>
+<script src="~/js/script.js"></script>
+@*@foreach (var item in ViewBag.NotesToDo)
+    {
+        @if (!ViewBag.NotesToDoBool)
+        {
+            @if (item.Option == "Responsibility")
+            {
+                <script>
+                                                    let pos@(item.Id);
+                                                    let map@(item.Id);
+                                                    let bounds@(item.Id);
+                                                    let infoWindow@(item.Id);
+                                                    let currentInfoWindow@(item.Id);
+                                                    let service@(item.Id);
+                    let infoPane@(item.Id);
+                    </script>
+            }
+        }
+    }*@
+<script>
                                                 let pos;
-let map;
-let bounds;
-let infoWindow;
-let currentInfoWindow;
-let service;
-let infoPane;
-function initMap() {
-    // Initialize variables
-    bounds = new google.maps.LatLngBounds();
-    infoWindow = new google.maps.InfoWindow;
-    currentInfoWindow = infoWindow;
-/* TODO: Step 4A3: Add a generic sidebar */
-    infoPane = document.getElementById("panel@(item.Id)");
+                                                let map;
+                                                let bounds;
+                                                let infoWindow;
+                                                let currentInfoWindow;
+                let service;
+    let infoPane;
+    let mapdId;
 
-    // Try HTML5 geolocation
-    if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(position => {
-        pos = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-        };
-        map = new google.maps.Map(document.getElementById("map@(item.Id)"), {
-        center: pos,
-        zoom: 15
-        });
-        bounds.extend(pos);
+    let pos1;
+    let map1;
+    let bounds1;
+    let infoWindow1;
+    let currentInfoWindow1;
+    let service1;
+    let infoPane1;
 
-        infoWindow.setPosition(pos);
-        infoWindow.setContent('Location found.');
-        infoWindow.open(map);
-        map.setCenter(pos);
 
-    /* TODO: Step 3B2, Call the Places Nearby Search */
-        getNearbyPlaces(pos);
-    }, () => {
-        // Browser supports geolocation, but user has denied permission
-        handleLocationError(true, infoWindow);
-    });
-    } else {
-    // Browser doesn't support geolocation
-    handleLocationError(false, infoWindow);
-    }
+    function initMaps() {
+                                                    var maps = document.getElementsByClassName("maps");
+        var panels = document.getElementsByClassName("panels");
+        var mapInfos = document.getElementsByClassName("mapinfo")
+                                                    var ids, gps, mapId0, mapId1 = '';
+                                                    // Initialize variables
+
+
+       
+
+        for (var i = 0; i < maps.length; i++)
+        {
+        //if (i == 0) {
+            debugger;
+            bounds = new google.maps.LatLngBounds();
+            infoWindow = new google.maps.InfoWindow;
+            currentInfoWindow = infoWindow;
+            /* TODO: Step 4A3: Add a generic sidebar */
+            infoPane = document.getElementById(panels[i].id);
+            mapInfoIndividual = mapInfos[i].id.toString();
+            mapId = document.getElementById(maps[i].id);
+
+
+            //put location back here
+
+
+            // Try HTML5 geolocation
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                    debugger;
+                    map = new google.maps.Map(mapId, {
+                        center: pos,
+                        zoom: 15
+                    });
+                    bounds.extend(pos);
+
+                    infoWindow.setPosition(pos);
+                    infoWindow.setContent('Location found.');
+                    infoWindow.open(map);
+                    map.setCenter(pos);
+
+                    /* TODO: Step 3B2, Call the Places Nearby Search */
+                    debugger;
+                    getNearbyPlaces(pos);
+                }, () => {
+                    // Browser supports geolocation, but user has denied permission
+                    handleLocationError(true, infoWindow);
+                });
+            } else {
+                // Browser doesn't support geolocation
+                handleLocationError(false, infoWindow);
+            }
+        //}
+            
+        //if (i == 1) {
+        //    bounds1 = new google.maps.LatLngBounds();
+        //    infoWindow1 = new google.maps.InfoWindow;
+        //    currentInfoWindow1 = infoWindow1;
+        //    /* TODO: Step 4A3: Add a generic sidebar */
+        //    infoPane1 = document.getElementById(panels[i].id);
+        //    mapId1 = document.getElementById(maps[i].id);
+
+        //    // Try HTML5 geolocation
+        //    if (navigator.geolocation) {
+        //        navigator.geolocation.getCurrentPosition(position => {
+        //            pos1 = {
+        //                lat: position.coords.latitude,
+        //                lng: position.coords.longitude
+        //            };
+        //            map1 = new google.maps.Map(mapId1, {
+        //                center: pos1,
+        //                zoom: 15
+        //            });
+        //            bounds1.extend(pos1);
+
+        //            infoWindow1.setPosition(pos1);
+        //            infoWindow1.setContent('Location found.');
+        //            infoWindow1.open(map1);
+        //            map1.setCenter(pos1);
+
+        //            /* TODO: Step 3B2, Call the Places Nearby Search */
+        //            getNearbyPlaces1(pos1);
+        //        }, () => {
+        //            // Browser supports geolocation, but user has denied permission
+        //            handleLocationError1(true, infoWindow1);
+        //        });
+        //    } else {
+        //        // Browser doesn't support geolocation
+        //        handleLocationError1(false, infoWindow1);
+        //    }
+
+        //}
+        }
 }
 
 // Handle a geolocation error
 function handleLocationError(browserHasGeolocation, infoWindow) {
     // Set default location to Sydney, Australia
     pos = {lat: -33.856, lng: 151.215};
-    map = new google.maps.Map(document.getElementById("map@(item.Id)"), {
+    //map = new google.maps.Map(document.getElementById("map"), {
+    map = new google.maps.Map(mapId, {
     center: pos,
     zoom: 15
     });
@@ -492,33 +577,39 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
 }
 /* END TODO: Step 2, Geolocate your user */
                                                 /* TODO: Step 3B1, Call the Places Nearby Search */
-                                                function getNearbyPlaces(position) {
+    //function getNearbyPlaces(position, mapdiff, servicediff, boundsdiff) {
+    function getNearbyPlaces(position) {
                                                     let request = {
                                                         location: position,
                                                         rankBy: google.maps.places.RankBy.DISTANCE,
-                                                        keyword: '@item.GoogleMapsInfo'
-                                                    };
-
+                                                        keyword: mapInfoIndividual //will have to change this to googlemapsinfo
+                                                       
+        };
+        debugger
+                                                    //service = new google.maps.places.PlacesService(map);
                                                     service = new google.maps.places.PlacesService(map);
+                                                    //service.nearbySearch(request, nearbyCallback);
                                                     service.nearbySearch(request, nearbyCallback);
                                                 }
 
                                                 // Handle the results (up to 20) of the Nearby Search
                                                 function nearbyCallback(results, status) {
                                                     if (status == google.maps.places.PlacesServiceStatus.OK) {
+                                                        debugger
                                                         createMarkers(results);
                                                     }
                                                 }
 
                                                 /* TODO: Step 3C, Generate markers for search results */
                                                 // Set markers at the location of each place result
-                                                function createMarkers(places) {
-                                                    places.forEach(place => {
-                                                        let marker = new google.maps.Marker({
-                                                            position: place.geometry.location,
-                                                            map: map,
-                                                            title: place.name
-                                                        });
+    function createMarkers(places) {
+        places.forEach(place => {
+            let marker = new google.maps.Marker({
+                position: place.geometry.location,
+                map: map,
+                //map: mapdiff,
+                title: place.name
+            });
 
                                                         /* TODO: Step 4B: Add click listeners to the markers */
                                                         google.maps.event.addListener(marker, 'click', () => {
@@ -608,407 +699,11 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
                                                     }
                                                     // Open the infoPane
                                                     infoPane.classList.add("open");
-                                                }
-                                            </script>
-
-                                            <!-- TODO: Step 1C, Get an API key -->
-                                            <!-- TODO: Step 3A, Load the Places Library -->
-                                            <script async defer src='@String.Format("https://maps.googleapis.com/maps/api/js?key={0}&libraries=places&callback=initMap",API_Key.GoogleKey)'>
-                                            </script>
-                                        }
-
-                                        @if (item.Option == "Learning Opportunity")
-                                        {
-                                            <form id="form">
-                                                <div class="form-group">
-                                                    <input type="text" id="search@(item.Id)" value="@item.YoutubeInfo" disabled />
-                                                </div>
-                                                <div class="form-group">
-                                                    @*<input type="submit" class="btn btn-danger" value="Search">*@
-                                                    @Html.Hidden("API_KEY", API_Key.YoutubeKey)
-                                                    @Html.Hidden("itemId", (string)item.Id.ToString())
-                                                    <input type="button" class="submitbut" value="Search">
-                                                </div>
-                                            </form>
-
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div id="videos@(item.Id)">
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        }
-                                        <p id="Timer @item.Id"></p>
-                                        <script>
-                                            //var jsonSettings = new JsonSerializerSettings();
-//jsonSettings.DateFormatString = "dd/MM/yyy hh:mm:ss";
-//var modelFromDate = JsonConvert.SerializeObject(@item.StartDate, jsonSettings);
-                                            //var start = Date.now();
-                                            var start@(item.Id) = new Date(Date.parse("@item.StartDate.ToString()"));
-                                           //var start = new Date(Date.parse(modelFromDate));
-                                            var myVar = setInterval(myTimer, 1000);
-                                            function myTimer() {
-                                                var d = new Date();
-                                                var end@(item.Id) = Date.now();
-                                                var elapsed@(item.Id) = end@(item.Id) - start@(item.Id);
-                                                //debugger;
-                                               //document.getElementById("demo " + "@item.Id").innerHTML = d.toLocaleTimeString();
-                                                document.getElementById("Timer " + "@item.Id").innerHTML = elapsed@(item.Id)/1000;
-                                            }
-                                        </script>
-                                        <a asp-action="EditNote" asp-route-id="@item.Id">Edit</a>
-                                        <a asp-action="EditOptions" asp-route-id="@item.Id">Edit Responsibility/Learning Opportunity</a>
-                                    </div>
-                                </div>
-                            </article>
-                        }
-                    }
-                    @*<article class="kanban-entry grab" id="item-7" draggable="true">
-                            <div class="kanban-entry-inner">
-                                <div class="kanban-label">
-                                    <h2><a href="#">Test Card</a> <span>posted a status update</span></h2>
-                                    <p>
-                                        Just an example
-                                    </p>
-                                </div>
-                            </div>
-                        </article>*@
-                </div>
-            </div>
-            @*<div class="panel-footer">
-                    <a asp-action="CreateInProgress">Add a card...</a>
-                </div>*@
-        </div>
-        <!--sütun bitiş-->
-        <!--sütun başlangıç-->
-        <div class="panel panel-primary kanban-col">
-            <div class="panel-heading">
-                Complete
-                <i class="fa fa-2x fa-plus-circle pull-right"></i>
-            </div>
-            <div class="panel-body">
-                <div id="Complete" class="kanban-centered">
-
-                    @foreach (var item in ViewBag.NotesComplete)
-                    {
-
-                        @if (ViewBag.NotesCompleteBool)
-                        {
-                            <article class="kanban-entry grab" id="@item.Id" draggable="true">
-                                <div class="kanban-entry-inner">
-                                    <div class="kanban-label">
-                                        <h2><a href="#"> @item.Title</a></h2>
-                                        <p>
-                                            @item.NoteInfo
-                                        </p>
-                                    </div>
-                                </div>
-                            </article>
-                        }
-                        else
-                        {
-                            <article class="kanban-entry grab" id="@item.Id" draggable="true">
-                                <div class="kanban-entry-inner">
-                                    <div class="kanban-label">
-                                        <h2><a href="#"> @item.Title</a></h2>
-                                        <p>
-                                            @item.NoteInfo
-                                        </p>
-                                        @*<form method="post">
-            <input type="radio" value="" id="Option" name="Option" />Male<br />
-            <input type="submit" />
-        </form>*@
-                                        <p>
-                                            @item.Option
-                                        </p>
-                                        @if (item.Option == "Responsibility")
-                                        {
-
-                                            <div id="panel@(item.Id)" style="height: 100px;width: null;
-        background-color: white;
-        position: fixed;
-        z-index: 1;
-        overflow-x: hidden;
-        transition: all .2s ease-out;
-"></div>
-                                            <div id="map@(item.Id)" style="height:200px;width:200px;"></div>
-                                            @*<iframe width="200"
-                    height="200"
-                    style="border:0"
-                    loading="lazy"
-                    allowfullscreen
-                    src='@String.Format("https://www.google.com/maps/embed/v1/place?key={0}&q={1},+", API_Key.GoogleKey, @item.GoogleMapsInfo)'>
-            </iframe>*@
-                                            <!-- TODO: Step 1B, Add a map -->
-                                            <script>
-                                                let pos@(item.Id);
-let map@(item.Id);
-let bounds@(item.Id);
-let infoWindow@(item.Id);
-let currentInfoWindow@(item.Id);
-let service@(item.Id);
-let infoPane@(item.Id);
-function initMap@(item.Id)() {
-    // Initialize variables
-    bounds@(item.Id) = new google.maps.LatLngBounds();
-    infoWindow@(item.Id) = new google.maps.InfoWindow;
-    currentInfoWindow@(item.Id) = infoWindow@(item.Id);
-/* TODO: Step 4A3: Add a generic sidebar */
-    infoPane@(item.Id) = document.getElementById("panel@(item.Id)");
-
-    // Try HTML5 geolocation
-    if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(position => {
-        pos@(item.Id) = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-        };
-        map@(item.Id) = new google.maps.Map(document.getElementById("map@(item.Id)"), {
-        center: pos@(item.Id),
-        zoom: 15
-        });
-        bounds@(item.Id).extend(pos@(item.Id));
-
-        infoWindow@(item.Id).setPosition(pos@(item.Id));
-        infoWindow@(item.Id).setContent('Location found.');
-        infoWindow@(item.Id).open(map@(item.Id));
-        map@(item.Id).setCenter(pos@(item.Id));
-
-    /* TODO: Step 3B2, Call the Places Nearby Search */
-        getNearbyPlaces(pos@(item.Id));
-    }, () => {
-        // Browser supports geolocation, but user has denied permission
-        handleLocationError(true, infoWindow@(item.Id));
-    });
-    } else {
-    // Browser doesn't support geolocation
-    handleLocationError(false, infoWindow@(item.Id));
-    }
-}
-
-// Handle a geolocation error
-function handleLocationError(browserHasGeolocation, infoWindow) {
-    // Set default location to Sydney, Australia
-    pos@(item.Id) = {lat: -33.856, lng: 151.215};
-    map@(item.Id) = new google.maps.Map(document.getElementById("map@(item.Id)"), {
-    center: pos@(item.Id),
-    zoom: 15
-    });
-
-    // Display an InfoWindow at the map center
-    infoWindow@(item.Id).setPosition(pos@(item.Id));
-    infoWindow@(item.Id).setContent(browserHasGeolocation ?
-    'Geolocation permissions denied. Using default location.' :
-    'Error: Your browser doesn\'t support geolocation.');
-    infoWindow@(item.Id).open(map@(item.Id));
-    currentInfoWindow@(item.Id) = infoWindow@(item.Id);
-
-/* TODO: Step 3B3, Call the Places Nearby Search */
-    getNearbyPlaces(pos@(item.Id));
-}
-/* END TODO: Step 2, Geolocate your user */
-                                                /* TODO: Step 3B1, Call the Places Nearby Search */
-                                                function getNearbyPlaces(position) {
-                                                    let request@(item.Id) = {
-                                                        location: position,
-                                                        rankBy: google.maps.places.RankBy.DISTANCE,
-                                                        keyword: '@item.GoogleMapsInfo'
-                                                    };
-
-                                                    service@(item.Id) = new google.maps.places.PlacesService(map@(item.Id));
-                                                    service@(item.Id).nearbySearch(request@(item.Id), nearbyCallback);
-                                                }
-
-                                                // Handle the results (up to 20) of the Nearby Search
-                                                function nearbyCallback(results, status) {
-                                                    if (status == google.maps.places.PlacesServiceStatus.OK) {
-                                                        createMarkers(results);
-                                                    }
-                                                }
-
-                                                /* TODO: Step 3C, Generate markers for search results */
-                                                // Set markers at the location of each place result
-                                                function createMarkers(places) {
-                                                    places.forEach(place => {
-                                                        let marker@(item.Id) = new google.maps.Marker({
-                                                            position: place.geometry.location,
-                                                            map: map@(item.Id),
-                                                            title: place.name
-                                                        });
-
-                                                        /* TODO: Step 4B: Add click listeners to the markers */
-                                                        google.maps.event.addListener(marker@(item.Id), 'click', () => {
-                                                            let request@(item.Id) = {
-                                                                placeId: place.place_id,
-                                                                fields: ['name', 'formatted_address', 'geometry', 'rating',
-                                                                    'website', 'photos']
-                                                            };
-
-                                                            /* Only fetch the details of a place when the user clicks on a marker.
-                                                            * If we fetch the details for all place results as soon as we get
-                                                            * the search response, we will hit API rate limits. */
-                                                            service@(item.Id).getDetails(request@(item.Id), (placeResult, status) => {
-                                                                showDetails(placeResult, marker@(item.Id), status)
-                                                            });
-                                                        });
-                                                        // Adjust the map bounds to include the location of this marker
-                                                        bounds@(item.Id).extend(place.geometry.location);
-                                                    });
-                                                    /* Once all the markers have been placed, adjust the bounds of the map to
-                                                    * show all the markers within the visible area. */
-                                                    map@(item.Id).fitBounds(bounds@(item.Id));
-                                                }
-
-                                                /* TODO: Step 4C: Show place details in an info window */
-                                                function showDetails(placeResult, marker, status) {
-                                                    if (status == google.maps.places.PlacesServiceStatus.OK) {
-                                                        let placeInfowindow@(item.Id) = new google.maps.InfoWindow();
-                                                        placeInfowindow@(item.Id).setContent('<div><strong>' + placeResult.name +
-                                                            '</strong><br>' + 'Rating: ' + placeResult.rating + '</div>');
-                                                        placeInfowindow@(item.Id).open(marker.map, marker);
-                                                        currentInfoWindow@(item.Id).close();
-                                                        currentInfoWindow@(item.Id) = placeInfowindow@(item.Id);
-                                                        showPanel(placeResult);
-                                                    } else {
-                                                        console.log('showDetails failed: ' + status);
-                                                    }
-                                                }
-                                                /* TODO: Step 4D: Load place details in a sidebar */
-                                                // Displays place details in a sidebar
-                                                function showPanel(placeResult) {
-                                                    // If infoPane is already open, close it
-                                                    if (infoPane@(item.Id).classList.contains("open")) {
-                                                        infoPane@(item.Id).classList.remove("open");
-                                                    }
-
-                                                    // Clear the previous details
-                                                    while (infoPane@(item.Id).lastChild) {
-                                                        infoPane@(item.Id).removeChild(infoPane@(item.Id).lastChild);
-                                                    }
-
-                                                    /* TODO: Step 4E: Display a Place Photo with the Place Details */
-
-                                                    // Add place details with text formatting
-                                                    let name@(item.Id) = document.createElement('h1');
-                                                    name@(item.Id).classList.add('place');
-                                                    name@(item.Id).textContent = placeResult.name;
-                                                    infoPane@(item.Id).appendChild(name@(item.Id));
-                                                    if (placeResult.rating != null) {
-                                                        let rating@(item.Id) = document.createElement('p');
-                                                        rating@(item.Id).classList.add('details');
-                                                        rating@(item.Id).textContent = `Rating: ${placeResult.rating} \u272e`;
-                                                        infoPane@(item.Id).appendChild(rating@(item.Id));
-                                                    }
-                                                    let address@(item.Id) = document.createElement('p');
-                                                    address@(item.Id).classList.add('details');
-                                                    address@(item.Id).textContent = placeResult.formatted_address;
-                                                    infoPane@(item.Id).appendChild(address@(item.Id));
-                                                    if (placeResult.website) {
-                                                        let websitePara@(item.Id) = document.createElement('p');
-                                                        let websiteLink@(item.Id) = document.createElement('a');
-                                                        let websiteUrl@(item.Id) = document.createTextNode(placeResult.website);
-                                                        websiteLink@(item.Id).appendChild(websiteUrl@(item.Id));
-                                                        websiteLink@(item.Id).title = placeResult.website;
-                                                        websiteLink@(item.Id).href = placeResult.website;
-                                                        websitePara@(item.Id).appendChild(websiteLink@(item.Id));
-                                                        infoPane@(item.Id).appendChild(websitePara@(item.Id));
-                                                    }
-                                                    /* TODO: Step 4E: Display a Place Photo with the Place Details */
-                                                    // Add the primary photo, if there is one
-                                                    if (placeResult.photos != null) {
-                                                        let firstPhoto@(item.Id) = placeResult.photos[0];
-                                                        let photo@(item.Id) = document.createElement('img');
-                                                        photo@(item.Id).classList.add('hero');
-                                                        photo@(item.Id).src = firstPhoto@(item.Id).getUrl();
-                                                        infoPane@(item.Id).appendChild(photo@(item.Id));
-                                                    }
-                                                    // Open the infoPane
-                                                    infoPane@(item.Id).classList.add("open");
-                                                }
-                                            </script>
-
-                                            <!-- TODO: Step 1C, Get an API key -->
-                                            <!-- TODO: Step 3A, Load the Places Library -->
-                                            <script async defer src='@String.Format("https://maps.googleapis.com/maps/api/js?key={0}&libraries=places&callback=initMap{1}", API_Key.GoogleKey, @item.Id)'>
-                                            </script>
-                                        }
-
-                                        @if (item.Option == "Learning Opportunity")
-                                        {
-                                            <form id="form">
-                                                <div class="form-group">
-                                                    <input type="text" id="search@(item.Id)" value="@item.YoutubeInfo" disabled />
-                                                </div>
-                                                <div class="form-group">
-                                                    @*<input type="submit" class="btn btn-danger" value="Search">*@
-                                                    @Html.Hidden("API_KEY", API_Key.YoutubeKey)
-                                                    @Html.Hidden("itemId", (string)item.Id.ToString())
-                                                    <input type="button" class="submitbut" value="Search">
-                                                </div>
-                                            </form>
-
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div id="videos@(item.Id)">
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        }
-                                        <a asp-action="EditNote" asp-route-id="@item.Id">Edit Note</a>
-                                        <a asp-action="EditOptions" asp-route-id="@item.Id">Edit Responsibility/Learning Opportunity</a>
-                                    </div>
-                                </div>
-                            </article>
-                        }
-                    }
-                </div>
-            </div>
-            @*<div class="panel-footer">
-                    <a asp-action="CreateComplete">Add a card...</a>
-                </div>*@
-            @*<ul id="sortable1" class="connectedSortable">
-                    <li class="ui-state-default">Item 1</li>
-                    <li class="ui-state-default">Item 2</li>
-                    <li class="ui-state-default">Item 3</li>
-                    <li class="ui-state-default">Item 4</li>
-                    <li class="ui-state-default">Item 5</li>
-                </ul>
-
-                <ul id="sortable2" class="connectedSortable">
-                    <li class="ui-state-highlight">Item 1</li>
-                    <li class="ui-state-highlight">Item 2</li>
-                    <li class="ui-state-highlight">Item 3</li>
-                    <li class="ui-state-highlight">Item 4</li>
-                    <li class="ui-state-highlight">Item 5</li>
-                </ul>*@
-        </div>
-        <!--sütun bitiş-->
+                }
 
 
-    </div>
-</div>
 
-
-<!-- Static Modal -->
-<div class="modal modal-static fade" id="processing-modal" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="text-center">
-                    <i class="fa fa-refresh fa-5x fa-spin"></i>
-                    <h4>Processing...</h4>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="~/js/signalr/dist/browser/signalr.js"></script>
-<script src="~/js/site.js"></script>
-<script>
-    //var API_KEY = <%=API_Key.YoutubeKey%>;
 </script>
-<script src="~/js/script.js"></script>
+<script async defer src='@String.Format("https://maps.googleapis.com/maps/api/js?key={0}&libraries=places&callback=initMaps", API_Key.GoogleKey)'>
+</script>
 

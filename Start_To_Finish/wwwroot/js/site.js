@@ -75,7 +75,7 @@ function draggableInit() {
         if (sourceId != targetId) {
             setTimeout(function () {
                 window.location.reload(true);
-            }, 1000);
+            }, 2000);
             //return false;
         }
     });

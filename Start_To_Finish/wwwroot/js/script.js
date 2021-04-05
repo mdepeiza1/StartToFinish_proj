@@ -18,6 +18,22 @@
     });
 
 
+
+    $(".submitbut").click(function () {
+        var API_KEY = $(this).siblings('#API_KEY').val()
+        var itemId = $(this).siblings('#itemId').val()
+
+        event.preventDefault()
+
+
+        var video = ''
+
+        var search = $('#search' + itemId).val()
+
+        videoSearch(API_KEY, search, 10, itemId)
+    });
+
+
     //$("#form"+itemId).submit(function (event) {
     //    event.preventDefault()
 
